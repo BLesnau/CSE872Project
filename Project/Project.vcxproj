@@ -95,6 +95,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="res\DefaultPic.jpg" />
     <None Include="res\Project.ico" />
     <None Include="res\Project.rc2" />
     <None Include="res\ProjectDoc.ico" />
