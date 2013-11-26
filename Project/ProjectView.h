@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <atlimage.h>
 
 
 class CProjectView : public CView
@@ -14,6 +15,8 @@ protected: // create from serialization only
 // Attributes
 public:
 	CProjectDoc* GetDocument() const;
+   CImage m_image;
+   BOOL m_bValidImage;
 
 // Operations
 public:
@@ -22,6 +25,8 @@ public:
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+   virtual void OnInitialUpdate();
+   
 protected:
 
 // Implementation
@@ -32,11 +37,19 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
+   void LoadNewImage( CString strFilePath );
+
 protected:
 
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+   afx_msg void OnImageOpen();
+   afx_msg void OnImageReset();
+   afx_msg void OnSelectionClear();
+   afx_msg void OnProcessEntireImage();
+   afx_msg void OnProcessSelection();
 };
 
 #ifndef _DEBUG  // debug version in ProjectView.cpp
