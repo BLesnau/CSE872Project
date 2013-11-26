@@ -22,6 +22,11 @@
 IMPLEMENT_DYNCREATE(CProjectView, CView)
 
 BEGIN_MESSAGE_MAP(CProjectView, CView)
+   ON_COMMAND(ID_IMAGE_OPEN, &CProjectView::OnImageOpen)
+   ON_COMMAND(ID_IMAGE_RESET, &CProjectView::OnImageReset)
+   ON_COMMAND(ID_SELECTION_CLEAR, &CProjectView::OnSelectionClear)
+   ON_COMMAND(ID_PROCESS_PROCESS_ENTIRE_IMAGE, &CProjectView::OnProcessEntireImage)
+   ON_COMMAND(ID_PROCESS_PROCESS_SELECTION, &CProjectView::OnProcessSelection)
 END_MESSAGE_MAP()
 
 // CProjectView construction/destruction
@@ -56,6 +61,33 @@ void CProjectView::OnDraw(CDC* /*pDC*/)
 	// TODO: add draw code for native data here
 }
 
+void CProjectView::OnImageOpen()
+{
+
+}
+
+
+void CProjectView::OnImageReset()
+{
+
+}
+
+
+void CProjectView::OnSelectionClear()
+{
+
+}
+
+
+void CProjectView::OnProcessEntireImage()
+{
+
+}
+
+void CProjectView::OnProcessSelection()
+{
+
+}
 
 // CProjectView diagnostics
 
@@ -76,6 +108,3 @@ CProjectDoc* CProjectView::GetDocument() const // non-debug version is inline
 	return (CProjectDoc*)m_pDocument;
 }
 #endif //_DEBUG
-
-
-// CProjectView message handlers

@@ -37,6 +37,12 @@ protected:
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+   afx_msg void OnImageOpen();
+   afx_msg void OnImageReset();
+   afx_msg void OnSelectionClear();
+   afx_msg void OnProcessEntireImage();
+   afx_msg void OnProcessSelection();
 };
 
 #ifndef _DEBUG  // debug version in ProjectView.cpp
