@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <atlimage.h>
 
 
 class CProjectView : public CView
@@ -14,6 +15,8 @@ protected: // create from serialization only
 // Attributes
 public:
 	CProjectDoc* GetDocument() const;
+   CImage m_image;
+   BOOL m_bValidImage;
 
 // Operations
 public:

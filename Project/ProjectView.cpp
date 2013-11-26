@@ -11,6 +11,7 @@
 
 #include "ProjectDoc.h"
 #include "ProjectView.h"
+#include <direct.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,8 +34,12 @@ END_MESSAGE_MAP()
 
 CProjectView::CProjectView()
 {
-	// TODO: add construction code here
+   m_bValidImage = FALSE;
 
+   if( m_image.Load( _T("DefaultPic.jpeg") ) == S_OK )
+   {
+      m_bValidImage = TRUE;
+   }
 }
 
 CProjectView::~CProjectView()
@@ -51,12 +56,17 @@ BOOL CProjectView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CProjectView drawing
 
-void CProjectView::OnDraw(CDC* /*pDC*/)
+void CProjectView::OnDraw(CDC* pDC)
 {
 	CProjectDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+
+   if( m_bValidImage )
+   {
+      m_image.Draw( pDC->GetSafeHdc(), 0, 0 );
+   }
 
 	// TODO: add draw code for native data here
 }
