@@ -12,6 +12,7 @@
 #include "ProjectDoc.h"
 #include "ProjectView.h"
 #include <direct.h>
+#include <atlimage.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,11 +36,6 @@ END_MESSAGE_MAP()
 CProjectView::CProjectView()
 {
    m_bValidImage = FALSE;
-
-   if( m_image.Load( _T("DefaultPic.jpeg") ) == S_OK )
-   {
-      m_bValidImage = TRUE;
-   }
 }
 
 CProjectView::~CProjectView()
@@ -54,8 +50,12 @@ BOOL CProjectView::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
-// CProjectView drawing
+void CProjectView::OnInitialUpdate()
+{
+   LoadNewImage( L"DefaultPic.jpeg" );
+}
 
+// CProjectView drawing
 void CProjectView::OnDraw(CDC* pDC)
 {
 	CProjectDoc* pDoc = GetDocument();
@@ -65,15 +65,66 @@ void CProjectView::OnDraw(CDC* pDC)
 
    if( m_bValidImage )
    {
-      m_image.Draw( pDC->GetSafeHdc(), 0, 0 );
+      CImage drawnImage;
+      drawnImage.Create( m_image.GetWidth(), m_image.GetHeight(), m_image.GetBPP() );
+      m_image.BitBlt( drawnImage.GetDC(), 0, 0 );
+
+      drawnImage.Draw( pDC->GetSafeHdc(), 0, 0 );
+
+      drawnImage.ReleaseDC();
+   }
+}
+
+void CProjectView::Draw()
+{
+   
+}
+
+void CProjectView::LoadNewImage( CString strFilePath )
+{
+   if( m_bValidImage )
+   {
+      m_image.Destroy();
    }
 
-	// TODO: add draw code for native data here
+   m_bValidImage = FALSE;
+
+   if( m_image.Load( strFilePath ) == S_OK )
+   {
+      m_bValidImage = TRUE;
+   }
+   else
+   {
+      AfxMessageBox(L"Could not open image");
+   }
+
+   this->RedrawWindow();
 }
 
 void CProjectView::OnImageOpen()
 {
+   // TODO: Add your command handler code here
+   //CImage image;
+   //CString strFilter;
+   //CSimpleArray<GUID> arrayGuidTypes;
+   //HRESULT hResult = image.GetExporterFilterString(strFilter, arrayGuidTypes, _T( "All Image Files" ));
 
+   //if(FAILED(hResult))
+   //{
+   //   //CString strError;
+   //   //strError.Format("GetExporterFilter failed:\n%x - %s", hResult, _com_error(hResult).ErrorMessage());
+   //   AfxMessageBox(L"Could not open image");
+   //   return;
+   //}
+
+   CFileDialog fileDlg(true, NULL, NULL, OFN_FILEMUSTEXIST, L"Bitmap format|*.bmp|JPEG format|*.jpg;*.jpeg|GIF format|*.gif|PNG format|*.png|TIFF format|*.tif;*.tiff|");
+
+   if(fileDlg.DoModal() != IDOK)
+   {
+      return;
+   }
+
+   LoadNewImage( fileDlg.GetPathName() );
 }
 
 

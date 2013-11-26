@@ -25,6 +25,8 @@ public:
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+   virtual void OnInitialUpdate();
+   
 protected:
 
 // Implementation
@@ -34,6 +36,9 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
+
+   void LoadNewImage( CString strFilePath );
+   void Draw();
 
 protected:
 
