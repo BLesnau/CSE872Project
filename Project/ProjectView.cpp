@@ -75,11 +75,6 @@ void CProjectView::OnDraw(CDC* pDC)
    }
 }
 
-void CProjectView::Draw()
-{
-   
-}
-
 void CProjectView::LoadNewImage( CString strFilePath )
 {
    if( m_bValidImage )
@@ -103,20 +98,6 @@ void CProjectView::LoadNewImage( CString strFilePath )
 
 void CProjectView::OnImageOpen()
 {
-   // TODO: Add your command handler code here
-   //CImage image;
-   //CString strFilter;
-   //CSimpleArray<GUID> arrayGuidTypes;
-   //HRESULT hResult = image.GetExporterFilterString(strFilter, arrayGuidTypes, _T( "All Image Files" ));
-
-   //if(FAILED(hResult))
-   //{
-   //   //CString strError;
-   //   //strError.Format("GetExporterFilter failed:\n%x - %s", hResult, _com_error(hResult).ErrorMessage());
-   //   AfxMessageBox(L"Could not open image");
-   //   return;
-   //}
-
    CFileDialog fileDlg(true, NULL, NULL, OFN_FILEMUSTEXIST, L"Bitmap format|*.bmp|JPEG format|*.jpg;*.jpeg|GIF format|*.gif|PNG format|*.png|TIFF format|*.tif;*.tiff|");
 
    if(fileDlg.DoModal() != IDOK)
@@ -127,18 +108,15 @@ void CProjectView::OnImageOpen()
    LoadNewImage( fileDlg.GetPathName() );
 }
 
-
 void CProjectView::OnImageReset()
 {
 
 }
 
-
 void CProjectView::OnSelectionClear()
 {
 
 }
-
 
 void CProjectView::OnProcessEntireImage()
 {
@@ -151,7 +129,6 @@ void CProjectView::OnProcessSelection()
 }
 
 // CProjectView diagnostics
-
 #ifdef _DEBUG
 void CProjectView::AssertValid() const
 {

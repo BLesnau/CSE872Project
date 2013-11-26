@@ -38,7 +38,6 @@ public:
 #endif
 
    void LoadNewImage( CString strFilePath );
-   void Draw();
 
 protected:
 
