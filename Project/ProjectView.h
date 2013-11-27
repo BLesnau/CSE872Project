@@ -4,7 +4,7 @@
 
 #pragma once
 #include <atlimage.h>
-
+#include <vector>
 
 class CProjectView : public CView
 {
@@ -16,7 +16,9 @@ protected: // create from serialization only
 public:
    CProjectDoc* GetDocument() const;
    CImage m_image;
+   CImage m_origImage;
    BOOL m_bValidImage;
+   std::vector<CRect> m_selections;
 
    // Operations
 public:
@@ -38,6 +40,7 @@ public:
 #endif
 
    void LoadNewImage( CString strFilePath );
+   void CopyImage( CImage* src, CImage* dest );
 
 protected:
 

@@ -67,13 +67,34 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       if( m_bValidImage )
       {
          CImage drawnImage;
-         drawnImage.Create( m_image.GetWidth(), m_image.GetHeight(), m_image.GetBPP() );
-         m_image.BitBlt( drawnImage.GetDC(), 0, 0 );
+         CopyImage( &m_image, &drawnImage );
+
+         // Draw selections
+         for( int i=0; i<m_selections.size(); i++ )
+         {
+            auto selection = m_selections.at( i );
+            for( int x=selection.left; x<selection.right; x++ )
+            {
+               for( int y=selection.top; y<selection.bottom; y++ )
+               {
+                  if( x == selection.left || x == selection.right - 1 ||
+                        y == selection.top || y == selection.bottom - 1)
+                  {
+                     drawnImage.SetPixel( x, y, RGB( 255, 0, 0 ) );
+                  }
+               }
+            }
+         }
 
          drawnImage.Draw( pDC->GetSafeHdc(), 0, 0 );
-
-         drawnImage.ReleaseDC();
       }
+   }
+
+   void CProjectView::CopyImage( CImage* src, CImage* dest )
+   {
+      dest->Create( src->GetWidth(), src->GetHeight(), src->GetBPP() );
+      src->BitBlt( dest->GetDC(), 0, 0 );
+      dest->ReleaseDC();
    }
 
    void CProjectView::LoadNewImage( CString strFilePath )
@@ -81,6 +102,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       if( m_bValidImage )
       {
          m_image.Destroy();
+         m_origImage.Destroy();
       }
 
       m_bValidImage = FALSE;
@@ -94,7 +116,9 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          AfxMessageBox(L"Could not open image");
       }
 
-      this->RedrawWindow();
+      CopyImage( &m_image, &m_origImage );
+
+      RedrawWindow();
    }
 
    void CProjectView::OnImageOpen()
@@ -111,17 +135,40 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
    void CProjectView::OnImageReset()
    {
+      if( !m_bValidImage )
+      {
+         return;
+      }
 
+      CopyImage( &m_origImage, &m_image );
+
+      RedrawWindow();
    }
 
    void CProjectView::OnSelectionAutoselect()
    {
+      if( !m_bValidImage )
+      {
+         return;
+      }
 
+      auto left = min(m_image.GetWidth()-1, 25);
+      auto top = min(m_image.GetHeight()-1, 25);
+
+      if( m_image.GetWidth() - 1 >= left + 50 && m_image.GetHeight() - 1 >= top + 50  )
+      {
+         auto rect = CRect( left, top, left + 50, top + 50 );
+         m_selections.push_back( rect );
+      }
+
+      RedrawWindow();
    }
 
    void CProjectView::OnSelectionClear()
    {
+      m_selections.clear();
 
+      RedrawWindow();
    }
 
    void CProjectView::OnProcessEntireImage()
