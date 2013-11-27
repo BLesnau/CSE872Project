@@ -146,7 +146,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
       CopyImage( &m_image, &m_origImage );
 
-      Invalidate();
+      Invalidate(FALSE);
    }
 
    void CProjectView::OnImageOpen()
@@ -170,7 +170,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
       CopyImage( &m_origImage, &m_image );
 
-      Invalidate();
+      Invalidate(FALSE);
    }
 
    void CProjectView::OnSelectionAutoselect()
@@ -189,14 +189,14 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          m_selections.push_back( rect );
       }
 
-      Invalidate();
+      Invalidate(FALSE);
    }
 
    void CProjectView::OnSelectionClear()
    {
       m_selections.clear();
 
-      Invalidate();
+      Invalidate(FALSE);
    }
 
    void CProjectView::OnProcessEntireImage()
@@ -224,7 +224,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       m_dragSelection.right = min( point.x, m_image.GetWidth()-1 );
       m_dragSelection.bottom = min( point.y, m_image.GetHeight()-1 );
 
-      Invalidate();
+      Invalidate(FALSE);
    }
 
    void CProjectView::OnLButtonDown( UINT nFlags, CPoint point )
@@ -240,7 +240,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       m_dragSelection.right = m_dragSelection.left;
       m_dragSelection.bottom = m_dragSelection.top;
 
-      Invalidate();
+      Invalidate(FALSE);
    }
 
    void CProjectView::OnLButtonUp( UINT nFlags, CPoint point )
@@ -269,7 +269,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       m_bDragging = FALSE;
       m_dragSelection.SetRect(0, 0, 0, 0);
 
-      Invalidate();
+      Invalidate(FALSE);
    }
 
    void CProjectView::CorrectDragRect( CRect* rect )
