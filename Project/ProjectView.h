@@ -18,6 +18,8 @@ public:
    CImage m_image;
    CImage m_origImage;
    BOOL m_bValidImage;
+   BOOL m_bDragging;
+   CRect m_dragSelection;
    std::vector<CRect> m_selections;
 
    // Operations
@@ -41,6 +43,8 @@ public:
 
    void LoadNewImage( CString strFilePath );
    void CopyImage( CImage* src, CImage* dest );
+   void CorrectDragRect( CRect* rect );
+   void BoundRect( CRect* rect );
 
 protected:
 
@@ -54,6 +58,10 @@ public:
    afx_msg void OnProcessEntireImage();
    afx_msg void OnProcessSelection();
    afx_msg void OnSelectionAutoselect();
+
+   afx_msg void OnMouseMove( UINT nFlags, CPoint point );
+   afx_msg void OnLButtonDown( UINT nFlags, CPoint point );
+   afx_msg void OnLButtonUp( UINT nFlags, CPoint point );
 };
 
 #ifndef _DEBUG  // debug version in ProjectView.cpp

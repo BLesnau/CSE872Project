@@ -30,6 +30,9 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       ON_COMMAND(ID_PROCESS_PROCESS_ENTIRE_IMAGE, &CProjectView::OnProcessEntireImage)
       ON_COMMAND(ID_PROCESS_PROCESS_SELECTION, &CProjectView::OnProcessSelection)
       ON_COMMAND(ID_SELECTION_AUTOSELECT, &CProjectView::OnSelectionAutoselect)
+      ON_WM_MOUSEMOVE()
+      ON_WM_LBUTTONDOWN()
+      ON_WM_LBUTTONUP()
    END_MESSAGE_MAP()
 
    // CProjectView construction/destruction
@@ -37,6 +40,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
    CProjectView::CProjectView()
    {
       m_bValidImage = FALSE;
+      m_bDragging = FALSE;
    }
 
    CProjectView::~CProjectView()
@@ -70,7 +74,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          CopyImage( &m_image, &drawnImage );
 
          // Draw selections
-         for( int i=0; i<m_selections.size(); i++ )
+         for( int i=0; i<(int)m_selections.size(); i++ )
          {
             auto selection = m_selections.at( i );
             for( int x=selection.left; x<selection.right; x++ )
@@ -86,12 +90,36 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
             }
          }
 
+         if( m_bDragging )
+         {
+            CRect tmpSelection = m_dragSelection;
+            CorrectDragRect( &tmpSelection );
+            BoundRect( &tmpSelection );
+
+            if( tmpSelection.Width() >= 4 && tmpSelection.Height() >= 4 )
+            {
+               for( int x=tmpSelection.left; x<tmpSelection.right; x++ )
+               {
+                  for( int y=tmpSelection.top; y<tmpSelection.bottom; y++ )
+                  {
+                     if( x == tmpSelection.left || x == tmpSelection.right - 1 ||
+                        y == tmpSelection.top || y == tmpSelection.bottom - 1)
+                     {
+                        drawnImage.SetPixel( x, y, RGB( 255, 0, 0 ) );
+                     }
+                  }
+               }
+            }
+         }
+
          drawnImage.Draw( pDC->GetSafeHdc(), 0, 0 );
       }
    }
 
    void CProjectView::CopyImage( CImage* src, CImage* dest )
    {
+      dest->Destroy();
+
       dest->Create( src->GetWidth(), src->GetHeight(), src->GetBPP() );
       src->BitBlt( dest->GetDC(), 0, 0 );
       dest->ReleaseDC();
@@ -118,7 +146,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
       CopyImage( &m_image, &m_origImage );
 
-      RedrawWindow();
+      Invalidate();
    }
 
    void CProjectView::OnImageOpen()
@@ -142,7 +170,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
       CopyImage( &m_origImage, &m_image );
 
-      RedrawWindow();
+      Invalidate();
    }
 
    void CProjectView::OnSelectionAutoselect()
@@ -161,14 +189,14 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          m_selections.push_back( rect );
       }
 
-      RedrawWindow();
+      Invalidate();
    }
 
    void CProjectView::OnSelectionClear()
    {
       m_selections.clear();
 
-      RedrawWindow();
+      Invalidate();
    }
 
    void CProjectView::OnProcessEntireImage()
@@ -179,6 +207,99 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
    void CProjectView::OnProcessSelection()
    {
 
+   }
+
+   void CProjectView::OnMouseMove( UINT nFlags, CPoint point )
+   {
+      if( !m_bValidImage )
+      {
+         return;
+      }
+
+      if( !m_bDragging )
+      {
+         return;
+      }
+
+      m_dragSelection.right = min( point.x, m_image.GetWidth()-1 );
+      m_dragSelection.bottom = min( point.y, m_image.GetHeight()-1 );
+
+      Invalidate();
+   }
+
+   void CProjectView::OnLButtonDown( UINT nFlags, CPoint point )
+   {
+      if( !m_bValidImage )
+      {
+         return;
+      }
+
+      m_bDragging = TRUE;
+      m_dragSelection.left = max( point.x, 1 );
+      m_dragSelection.top = max( point.y, 1 );
+      m_dragSelection.right = m_dragSelection.left;
+      m_dragSelection.bottom = m_dragSelection.top;
+
+      Invalidate();
+   }
+
+   void CProjectView::OnLButtonUp( UINT nFlags, CPoint point )
+   {
+      if( !m_bValidImage )
+      {
+         return;
+      }
+
+      if( !m_bDragging )
+      {
+         return;
+      }
+
+      m_dragSelection.right = min( point.x, m_image.GetWidth()-1 );
+      m_dragSelection.bottom = min( point.y, m_image.GetHeight()-1 );
+
+      CorrectDragRect( &m_dragSelection );
+      BoundRect( &m_dragSelection );
+
+      if( m_dragSelection.Width() >= 4 && m_dragSelection.Height() >= 4 )
+      {
+         m_selections.push_back( m_dragSelection );
+      }
+
+      m_bDragging = FALSE;
+      m_dragSelection.SetRect(0, 0, 0, 0);
+
+      Invalidate();
+   }
+
+   void CProjectView::CorrectDragRect( CRect* rect )
+   {
+      if( rect->left > rect->right )
+      {
+         auto tmp = rect->left;
+         rect->left = rect->right;
+         rect->right = tmp;
+      }
+
+      if( rect->top > rect->bottom )
+      {
+         auto tmp = rect->top;
+         rect->top = rect->bottom;
+         rect->bottom = tmp;
+      }
+   }
+
+   void CProjectView::BoundRect( CRect* rect )
+   {
+      if( !m_bValidImage )
+      {
+         return;
+      }
+
+      rect->left = max(rect->left, 1);
+      rect->top = max(rect->top, 1);
+      rect->right = min(rect->right, m_image.GetWidth()-1);
+      rect->bottom = min(rect->bottom, m_image.GetHeight()-1);
    }
 
    // CProjectView diagnostics
