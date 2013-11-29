@@ -33,6 +33,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       ON_WM_MOUSEMOVE()
       ON_WM_LBUTTONDOWN()
       ON_WM_LBUTTONUP()
+      ON_COMMAND(ID_IMAGE_OPENDESTINATION, &CProjectView::OnImageOpendestination)
    END_MESSAGE_MAP()
 
    // CProjectView construction/destruction
@@ -244,6 +245,18 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       }
 
       LoadNewImage( fileDlg.GetPathName(), TRUE );
+   }
+
+   void CProjectView::OnImageOpendestination()
+   {
+      CFileDialog fileDlg(true, NULL, NULL, OFN_FILEMUSTEXIST, L"Bitmap format|*.bmp|JPEG format|*.jpg;*.jpeg|GIF format|*.gif|PNG format|*.png|TIFF format|*.tif;*.tiff|");
+
+      if(fileDlg.DoModal() != IDOK)
+      {
+         return;
+      }
+
+      LoadNewImage( fileDlg.GetPathName(), FALSE );
    }
 
    void CProjectView::OnImageReset()
