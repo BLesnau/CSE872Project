@@ -18,6 +18,9 @@ public:
    CImage m_image;
    CImage m_origImage;
    BOOL m_bValidImage;
+   CImage m_image2;
+   CImage m_origImage2;
+   BOOL m_bValidImage2;
    BOOL m_bDragging;
    CRect m_dragSelection;
    std::vector<CRect> m_selections;
@@ -41,7 +44,7 @@ public:
    virtual void Dump(CDumpContext& dc) const;
 #endif
 
-   void LoadNewImage( CString strFilePath );
+   BOOL LoadNewImage( CString strFilePath, BOOL bFirstImage );
    void CopyImage( CImage* src, CImage* dest );
    void CorrectDragRect( CRect* rect );
    void BoundRect( CRect* rect );

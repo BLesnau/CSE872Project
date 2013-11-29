@@ -40,6 +40,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
    CProjectView::CProjectView()
    {
       m_bValidImage = FALSE;
+      m_bValidImage2 = FALSE;
       m_bDragging = FALSE;
    }
 
@@ -57,7 +58,8 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
    void CProjectView::OnInitialUpdate()
    {
-      LoadNewImage( L"DefaultPic.jpeg" );
+      LoadNewImage( L"DefaultPic.jpeg", TRUE );
+      LoadNewImage( L"DefaultPic2.jpeg", FALSE );
    }
 
    // CProjectView drawing
@@ -68,10 +70,13 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       if (!pDoc)
          return;
 
-      if( m_bValidImage )
+      if( m_bValidImage && m_bValidImage2 )
       {
          CImage drawnImage;
          CopyImage( &m_image, &drawnImage );
+
+         CImage drawnImage2;
+         CopyImage( &m_image2, &drawnImage2 );
 
          // Draw selections
          for( int i=0; i<(int)m_selections.size(); i++ )
@@ -113,6 +118,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          }
 
          drawnImage.Draw( pDC->GetSafeHdc(), 0, 0 );
+         drawnImage2.Draw( pDC->GetSafeHdc(), drawnImage.GetWidth(), 0 );
       }
    }
 
@@ -125,28 +131,63 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       dest->ReleaseDC();
    }
 
-   void CProjectView::LoadNewImage( CString strFilePath )
+   BOOL CProjectView::LoadNewImage( CString strFilePath, BOOL bFirstImage )
    {
-      if( m_bValidImage )
+      if( bFirstImage && m_bValidImage )
       {
          m_image.Destroy();
          m_origImage.Destroy();
       }
-
-      m_bValidImage = FALSE;
-
-      if( m_image.Load( strFilePath ) == S_OK )
+      else if( m_bValidImage2 )
       {
-         m_bValidImage = TRUE;
+         m_image2.Destroy();
+         m_origImage2.Destroy();
+      }
+
+      if( bFirstImage )
+      {
+         m_bValidImage = FALSE;
+      }
+      else
+      {
+         m_bValidImage2 = FALSE;
+      }
+
+      CImage *image = NULL;
+      CImage *origImage = NULL;
+      if( bFirstImage )
+      {
+         image = &m_image;
+         origImage = &m_origImage;
+      }
+      else
+      {
+         image = &m_image2;
+         origImage = &m_origImage2;
+      }
+
+      if( image->Load( strFilePath ) == S_OK )
+      {
+         if( bFirstImage )
+         {
+            m_bValidImage = TRUE;
+         }
+         else
+         {
+            m_bValidImage2 = TRUE;
+         }
+
+         CopyImage( image, origImage );
       }
       else
       {
          AfxMessageBox(L"Could not open image");
+         return FALSE;
       }
 
-      CopyImage( &m_image, &m_origImage );
-
       Invalidate(FALSE);
+
+      return TRUE;
    }
 
    void CProjectView::OnImageOpen()
@@ -158,24 +199,25 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      LoadNewImage( fileDlg.GetPathName() );
+      LoadNewImage( fileDlg.GetPathName(), TRUE );
    }
 
    void CProjectView::OnImageReset()
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
       {
          return;
       }
 
       CopyImage( &m_origImage, &m_image );
+      CopyImage( &m_origImage2, &m_image2 );
 
       Invalidate(FALSE);
    }
 
    void CProjectView::OnSelectionAutoselect()
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
       {
          return;
       }
@@ -229,7 +271,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
    void CProjectView::OnLButtonDown( UINT nFlags, CPoint point )
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
       {
          return;
       }
@@ -245,7 +287,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
    void CProjectView::OnLButtonUp( UINT nFlags, CPoint point )
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
       {
          return;
       }
