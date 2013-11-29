@@ -266,13 +266,24 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
+      if( m_dragState != IDLE )
+      {
+         return;
+      }
+
       auto left = min(m_image.GetWidth()-1, 25);
       auto top = min(m_image.GetHeight()-1, 25);
 
-      if( m_image.GetWidth() - 1 >= left + 50 && m_image.GetHeight() - 1 >= top + 50  )
+      if( m_image.GetWidth() - 1 >= left + 50 && m_image.GetHeight() - 1 >= top + 50 )
       {
-         auto rect = CRect( left, top, left + 50, top + 50 );
-         m_selections.push_back( rect );
+         if( m_image2.GetWidth() - 1 >= 50 && m_image.GetHeight() >= 50 )
+         {
+            auto rect = CRect( left, top, left + 50, top + 50 );
+            m_selections.push_back( rect );
+
+            auto rect2 = CRect( 0, 0, 50, 50 );
+            m_selections2.push_back( rect2 );
+         }
       }
 
       Invalidate(FALSE);
