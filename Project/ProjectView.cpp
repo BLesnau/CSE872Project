@@ -42,6 +42,13 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       m_bValidImage = FALSE;
       m_bValidImage2 = FALSE;
       m_dragState = IDLE;
+
+      m_colors.push_back( RGB( 255, 0, 0 ) );
+      m_colors.push_back( RGB( 0, 255, 0 ) );
+      m_colors.push_back( RGB( 0, 0, 255 ) );
+      m_colors.push_back( RGB( 255, 255, 0 ) );
+      m_colors.push_back( RGB( 0, 255, 255 ) );
+      m_colors.push_back( RGB( 255, 0, 255 ) );
    }
 
    CProjectView::~CProjectView()
@@ -89,7 +96,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
                   if( x == selection.left || x == selection.right - 1 ||
                      y == selection.top || y == selection.bottom - 1)
                   {
-                     drawnImage.SetPixel( x, y, RGB( 255, 0, 0 ) );
+                     drawnImage.SetPixel( x, y, m_colors.at( i % m_colors.size() ) );
                   }
                }
             }
@@ -105,7 +112,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
                   if( x == selection.left || x == selection.right - 1 ||
                      y == selection.top || y == selection.bottom - 1)
                   {
-                     drawnImage2.SetPixel( x, y, RGB( 255, 0, 0 ) );
+                     drawnImage2.SetPixel( x, y, m_colors.at( i % m_colors.size() ) );
                   }
                }
             }
@@ -126,7 +133,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
                      if( x == tmpSelection.left || x == tmpSelection.right - 1 ||
                         y == tmpSelection.top || y == tmpSelection.bottom - 1)
                      {
-                        drawnImage.SetPixel( x, y, RGB( 255, 0, 0 ) );
+                        drawnImage.SetPixel( x, y, m_colors.at( m_selections.size() % m_colors.size() ) );
                      }
                   }
                }
@@ -147,7 +154,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
                      if( x == tmpSelection.left || x == tmpSelection.right - 1 ||
                         y == tmpSelection.top || y == tmpSelection.bottom - 1)
                      {
-                        drawnImage2.SetPixel( x, y, RGB( 255, 0, 0 ) );
+                        drawnImage2.SetPixel( x, y, m_colors.at( m_selections2.size() % m_colors.size() ) );
                      }
                   }
                }

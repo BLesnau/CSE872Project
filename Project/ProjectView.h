@@ -27,6 +27,7 @@ public:
    DragState m_dragState;
    std::vector<CRect> m_selections;
    std::vector<CRect> m_selections2;
+   std::vector<COLORREF> m_colors;
 
    // Operations
 public:
