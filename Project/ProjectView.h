@@ -14,6 +14,8 @@ protected: // create from serialization only
 
    // Attributes
 public:
+   enum DragState { IDLE, DRAGGING, FIXED };
+
    CProjectDoc* GetDocument() const;
    CImage m_image;
    CImage m_origImage;
@@ -21,9 +23,10 @@ public:
    CImage m_image2;
    CImage m_origImage2;
    BOOL m_bValidImage2;
-   BOOL m_bDragging;
    CRect m_dragSelection;
+   DragState m_dragState;
    std::vector<CRect> m_selections;
+   std::vector<CRect> m_selections2;
 
    // Operations
 public:
@@ -47,7 +50,7 @@ public:
    BOOL LoadNewImage( CString strFilePath, BOOL bFirstImage );
    void CopyImage( CImage* src, CImage* dest );
    void CorrectDragRect( CRect* rect );
-   void BoundRect( CRect* rect );
+   void BoundRect( CRect* rect, BOOL bFirstImage );
 
 protected:
 
