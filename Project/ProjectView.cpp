@@ -27,12 +27,12 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       ON_COMMAND(ID_IMAGE_OPEN, &CProjectView::OnImageOpen)
       ON_COMMAND(ID_IMAGE_RESET, &CProjectView::OnImageReset)
       ON_COMMAND(ID_SELECTION_CLEAR, &CProjectView::OnSelectionClear)
-      ON_COMMAND(ID_PROCESS_PROCESS_ENTIRE_IMAGE, &CProjectView::OnProcessEntireImage)
       ON_COMMAND(ID_PROCESS_PROCESS_SELECTION, &CProjectView::OnProcessSelection)
       ON_COMMAND(ID_SELECTION_AUTOSELECT, &CProjectView::OnSelectionAutoselect)
       ON_WM_MOUSEMOVE()
       ON_WM_LBUTTONDOWN()
       ON_WM_LBUTTONUP()
+      ON_COMMAND(ID_IMAGE_OPENDESTINATION, &CProjectView::OnImageOpendestination)
    END_MESSAGE_MAP()
 
    // CProjectView construction/destruction
@@ -40,7 +40,15 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
    CProjectView::CProjectView()
    {
       m_bValidImage = FALSE;
-      m_bDragging = FALSE;
+      m_bValidImage2 = FALSE;
+      m_dragState = IDLE;
+
+      m_colors.push_back( RGB( 255, 0, 0 ) );
+      m_colors.push_back( RGB( 0, 255, 0 ) );
+      m_colors.push_back( RGB( 0, 0, 255 ) );
+      m_colors.push_back( RGB( 255, 255, 0 ) );
+      m_colors.push_back( RGB( 0, 255, 255 ) );
+      m_colors.push_back( RGB( 255, 0, 255 ) );
    }
 
    CProjectView::~CProjectView()
@@ -57,7 +65,8 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
    void CProjectView::OnInitialUpdate()
    {
-      LoadNewImage( L"DefaultPic.jpeg" );
+      LoadNewImage( L"DefaultPic.jpeg", TRUE );
+      LoadNewImage( L"DefaultPic2.jpeg", FALSE );
    }
 
    // CProjectView drawing
@@ -68,10 +77,13 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       if (!pDoc)
          return;
 
-      if( m_bValidImage )
+      if( m_bValidImage && m_bValidImage2 )
       {
          CImage drawnImage;
          CopyImage( &m_image, &drawnImage );
+
+         CImage drawnImage2;
+         CopyImage( &m_image2, &drawnImage2 );
 
          // Draw selections
          for( int i=0; i<(int)m_selections.size(); i++ )
@@ -82,19 +94,35 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
                for( int y=selection.top; y<selection.bottom; y++ )
                {
                   if( x == selection.left || x == selection.right - 1 ||
-                        y == selection.top || y == selection.bottom - 1)
+                     y == selection.top || y == selection.bottom - 1)
                   {
-                     drawnImage.SetPixel( x, y, RGB( 255, 0, 0 ) );
+                     drawnImage.SetPixel( x, y, m_colors.at( i % m_colors.size() ) );
                   }
                }
             }
          }
 
-         if( m_bDragging )
+         for( int i=0; i<(int)m_selections2.size(); i++ )
+         {
+            auto selection = m_selections2.at( i );
+            for( int x=selection.left; x<selection.right; x++ )
+            {
+               for( int y=selection.top; y<selection.bottom; y++ )
+               {
+                  if( x == selection.left || x == selection.right - 1 ||
+                     y == selection.top || y == selection.bottom - 1)
+                  {
+                     drawnImage2.SetPixel( x, y, m_colors.at( i % m_colors.size() ) );
+                  }
+               }
+            }
+         }
+
+         if( m_dragState == DRAGGING )
          {
             CRect tmpSelection = m_dragSelection;
             CorrectDragRect( &tmpSelection );
-            BoundRect( &tmpSelection );
+            BoundRect( &tmpSelection, TRUE );
 
             if( tmpSelection.Width() >= 4 && tmpSelection.Height() >= 4 )
             {
@@ -105,7 +133,28 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
                      if( x == tmpSelection.left || x == tmpSelection.right - 1 ||
                         y == tmpSelection.top || y == tmpSelection.bottom - 1)
                      {
-                        drawnImage.SetPixel( x, y, RGB( 255, 0, 0 ) );
+                        drawnImage.SetPixel( x, y, m_colors.at( m_selections.size() % m_colors.size() ) );
+                     }
+                  }
+               }
+            }
+         }
+         else if( m_dragState == FIXED )
+         {
+            CRect tmpSelection = m_dragSelection;
+            CorrectDragRect( &tmpSelection );
+            BoundRect( &tmpSelection, FALSE );
+
+            if( tmpSelection.Width() >= 4 && tmpSelection.Height() >= 4 )
+            {
+               for( int x=tmpSelection.left; x<tmpSelection.right; x++ )
+               {
+                  for( int y=tmpSelection.top; y<tmpSelection.bottom; y++ )
+                  {
+                     if( x == tmpSelection.left || x == tmpSelection.right - 1 ||
+                        y == tmpSelection.top || y == tmpSelection.bottom - 1)
+                     {
+                        drawnImage2.SetPixel( x, y, m_colors.at( m_selections2.size() % m_colors.size() ) );
                      }
                   }
                }
@@ -113,6 +162,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          }
 
          drawnImage.Draw( pDC->GetSafeHdc(), 0, 0 );
+         drawnImage2.Draw( pDC->GetSafeHdc(), drawnImage.GetWidth(), 0 );
       }
    }
 
@@ -125,28 +175,63 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       dest->ReleaseDC();
    }
 
-   void CProjectView::LoadNewImage( CString strFilePath )
+   BOOL CProjectView::LoadNewImage( CString strFilePath, BOOL bFirstImage )
    {
-      if( m_bValidImage )
+      if( bFirstImage && m_bValidImage )
       {
          m_image.Destroy();
          m_origImage.Destroy();
       }
-
-      m_bValidImage = FALSE;
-
-      if( m_image.Load( strFilePath ) == S_OK )
+      else if( m_bValidImage2 )
       {
-         m_bValidImage = TRUE;
+         m_image2.Destroy();
+         m_origImage2.Destroy();
+      }
+
+      if( bFirstImage )
+      {
+         m_bValidImage = FALSE;
+      }
+      else
+      {
+         m_bValidImage2 = FALSE;
+      }
+
+      CImage *image = NULL;
+      CImage *origImage = NULL;
+      if( bFirstImage )
+      {
+         image = &m_image;
+         origImage = &m_origImage;
+      }
+      else
+      {
+         image = &m_image2;
+         origImage = &m_origImage2;
+      }
+
+      if( image->Load( strFilePath ) == S_OK )
+      {
+         if( bFirstImage )
+         {
+            m_bValidImage = TRUE;
+         }
+         else
+         {
+            m_bValidImage2 = TRUE;
+         }
+
+         CopyImage( image, origImage );
       }
       else
       {
          AfxMessageBox(L"Could not open image");
+         return FALSE;
       }
 
-      CopyImage( &m_image, &m_origImage );
-
       Invalidate(FALSE);
+
+      return TRUE;
    }
 
    void CProjectView::OnImageOpen()
@@ -158,24 +243,42 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      LoadNewImage( fileDlg.GetPathName() );
+      LoadNewImage( fileDlg.GetPathName(), TRUE );
+   }
+
+   void CProjectView::OnImageOpendestination()
+   {
+      CFileDialog fileDlg(true, NULL, NULL, OFN_FILEMUSTEXIST, L"Bitmap format|*.bmp|JPEG format|*.jpg;*.jpeg|GIF format|*.gif|PNG format|*.png|TIFF format|*.tif;*.tiff|");
+
+      if(fileDlg.DoModal() != IDOK)
+      {
+         return;
+      }
+
+      LoadNewImage( fileDlg.GetPathName(), FALSE );
    }
 
    void CProjectView::OnImageReset()
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
       {
          return;
       }
 
       CopyImage( &m_origImage, &m_image );
+      CopyImage( &m_origImage2, &m_image2 );
 
       Invalidate(FALSE);
    }
 
    void CProjectView::OnSelectionAutoselect()
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
+      {
+         return;
+      }
+
+      if( m_dragState != IDLE )
       {
          return;
       }
@@ -183,10 +286,16 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       auto left = min(m_image.GetWidth()-1, 25);
       auto top = min(m_image.GetHeight()-1, 25);
 
-      if( m_image.GetWidth() - 1 >= left + 50 && m_image.GetHeight() - 1 >= top + 50  )
+      if( m_image.GetWidth() - 1 >= left + 50 && m_image.GetHeight() - 1 >= top + 50 )
       {
-         auto rect = CRect( left, top, left + 50, top + 50 );
-         m_selections.push_back( rect );
+         if( m_image2.GetWidth() - 1 >= 50 && m_image.GetHeight() >= 50 )
+         {
+            auto rect = CRect( left, top, left + 50, top + 50 );
+            m_selections.push_back( rect );
+
+            auto rect2 = CRect( 0, 0, 50, 50 );
+            m_selections2.push_back( rect2 );
+         }
       }
 
       Invalidate(FALSE);
@@ -195,18 +304,41 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
    void CProjectView::OnSelectionClear()
    {
       m_selections.clear();
+      m_selections2.clear();
 
       Invalidate(FALSE);
    }
 
-   void CProjectView::OnProcessEntireImage()
-   {
-
-   }
-
    void CProjectView::OnProcessSelection()
    {
+      if( !m_bValidImage || !m_bValidImage2 )
+      {
+         AfxMessageBox( L"At least one valid image is not loaded" );
+         return;
+      }
 
+      if( m_selections.size() != m_selections2.size() )
+      {
+         AfxMessageBox( L"Each image has a different number of selections" );
+         return;
+      }
+
+      for( int i=0; i<m_selections.size(); i++ )
+      {
+         auto srcSel = m_selections.at(i);
+         auto dstSel = m_selections2.at(i);
+
+         for( int w=0; w<=srcSel.Width(); w++ )
+         {
+            for( int h=0; h<=srcSel.Height(); h++ )
+            {
+               auto clr = m_image.GetPixel( srcSel.left + w, srcSel.top + h );
+               m_image2.SetPixel( dstSel.left + w, dstSel.top + h, clr );
+            }
+         }
+      }
+
+      OnSelectionClear();
    }
 
    void CProjectView::OnMouseMove( UINT nFlags, CPoint point )
@@ -216,58 +348,101 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      if( !m_bDragging )
+      if( m_dragState == IDLE )
       {
          return;
       }
 
-      m_dragSelection.right = min( point.x, m_image.GetWidth()-1 );
-      m_dragSelection.bottom = min( point.y, m_image.GetHeight()-1 );
+      if( m_dragState == DRAGGING )
+      {
+         m_dragSelection.right = min( point.x, m_image.GetWidth()-1 );
+         m_dragSelection.bottom = min( point.y, m_image.GetHeight()-1 );
+      }
+      else if( m_dragState == FIXED )
+      {
+         point.x -= m_image.GetWidth();
+
+         if( point.x >= 0 && point.y >= 0 )
+         {
+            m_dragSelection.SetRect( point.x, point.y, point.x + m_dragSelection.Width(),  point.y + m_dragSelection.Height() );
+
+            if( m_dragSelection.right > m_image2.GetWidth() )
+            {
+               m_dragSelection.SetRect( m_image2.GetWidth() - 1 - m_dragSelection.Width(), m_dragSelection.top, m_image2.GetWidth() - 1, m_dragSelection.bottom );
+            }
+
+            if( m_dragSelection.bottom > m_image2.GetHeight() )
+            {
+               m_dragSelection.SetRect( m_dragSelection.left, m_image2.GetHeight() - 1 - m_dragSelection.Height(), m_dragSelection.right, m_image2.GetHeight() - 1 );
+            }
+         }       
+      }
 
       Invalidate(FALSE);
    }
 
    void CProjectView::OnLButtonDown( UINT nFlags, CPoint point )
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
       {
          return;
       }
 
-      m_bDragging = TRUE;
-      m_dragSelection.left = max( point.x, 1 );
-      m_dragSelection.top = max( point.y, 1 );
-      m_dragSelection.right = m_dragSelection.left;
-      m_dragSelection.bottom = m_dragSelection.top;
+      if( m_dragState == IDLE )
+      {
+         if( point.x >= m_image.GetWidth() || point.y >= m_image.GetHeight() )
+         {
+            return;
+         }
+
+         m_dragState = DRAGGING;
+         m_dragSelection.left = max( point.x, 1 );
+         m_dragSelection.top = max( point.y, 1 );
+         m_dragSelection.right = m_dragSelection.left;
+         m_dragSelection.bottom = m_dragSelection.top;
+      }
 
       Invalidate(FALSE);
    }
 
    void CProjectView::OnLButtonUp( UINT nFlags, CPoint point )
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
       {
          return;
       }
 
-      if( !m_bDragging )
+      if( m_dragState == IDLE )
       {
          return;
       }
 
-      m_dragSelection.right = min( point.x, m_image.GetWidth()-1 );
-      m_dragSelection.bottom = min( point.y, m_image.GetHeight()-1 );
+      if( m_dragState == DRAGGING )
+      {     
+         m_dragSelection.right = min( point.x, m_image.GetWidth()-1 );
+         m_dragSelection.bottom = min( point.y, m_image.GetHeight()-1 );
 
-      CorrectDragRect( &m_dragSelection );
-      BoundRect( &m_dragSelection );
+         CorrectDragRect( &m_dragSelection );
+         BoundRect( &m_dragSelection, TRUE );
 
-      if( m_dragSelection.Width() >= 4 && m_dragSelection.Height() >= 4 )
-      {
-         m_selections.push_back( m_dragSelection );
+         if( m_dragSelection.Width() >= 4 && m_dragSelection.Height() >= 4 )
+         {
+            m_selections.push_back( m_dragSelection );
+         }
+
+         m_dragSelection.SetRect( 0, 0, m_dragSelection.Width(), m_dragSelection.Height() );
+         m_dragState = FIXED;
       }
+      else if( m_dragState == FIXED )
+      {
+         if( m_dragSelection.Width() >= 4 && m_dragSelection.Height() >= 4 )
+         {
+            m_selections2.push_back( m_dragSelection );
+         }
 
-      m_bDragging = FALSE;
-      m_dragSelection.SetRect(0, 0, 0, 0);
+         m_dragSelection.SetRect(0, 0, 0, 0);
+         m_dragState = IDLE;
+      }
 
       Invalidate(FALSE);
    }
@@ -289,17 +464,27 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       }
    }
 
-   void CProjectView::BoundRect( CRect* rect )
+   void CProjectView::BoundRect( CRect* rect, BOOL bFirstImage )
    {
-      if( !m_bValidImage )
+      if( !m_bValidImage || !m_bValidImage2 )
       {
          return;
       }
 
+      CImage *image = NULL;
+      if( bFirstImage )
+      {
+         image = &m_image;
+      }
+      else
+      {
+         image = &m_image2;
+      }
+
       rect->left = max(rect->left, 1);
       rect->top = max(rect->top, 1);
-      rect->right = min(rect->right, m_image.GetWidth()-1);
-      rect->bottom = min(rect->bottom, m_image.GetHeight()-1);
+      rect->right = min(rect->right, image->GetWidth()-1);
+      rect->bottom = min(rect->bottom, image->GetHeight()-1);
    }
 
    // CProjectView diagnostics
