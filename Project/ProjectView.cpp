@@ -27,7 +27,6 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       ON_COMMAND(ID_IMAGE_OPEN, &CProjectView::OnImageOpen)
       ON_COMMAND(ID_IMAGE_RESET, &CProjectView::OnImageReset)
       ON_COMMAND(ID_SELECTION_CLEAR, &CProjectView::OnSelectionClear)
-      ON_COMMAND(ID_PROCESS_PROCESS_ENTIRE_IMAGE, &CProjectView::OnProcessEntireImage)
       ON_COMMAND(ID_PROCESS_PROCESS_SELECTION, &CProjectView::OnProcessSelection)
       ON_COMMAND(ID_SELECTION_AUTOSELECT, &CProjectView::OnSelectionAutoselect)
       ON_WM_MOUSEMOVE()
@@ -310,14 +309,36 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       Invalidate(FALSE);
    }
 
-   void CProjectView::OnProcessEntireImage()
-   {
-
-   }
-
    void CProjectView::OnProcessSelection()
    {
+      if( !m_bValidImage || !m_bValidImage2 )
+      {
+         AfxMessageBox( L"At least one valid image is not loaded" );
+         return;
+      }
 
+      if( m_selections.size() != m_selections2.size() )
+      {
+         AfxMessageBox( L"Each image has a different number of selections" );
+         return;
+      }
+
+      for( int i=0; i<m_selections.size(); i++ )
+      {
+         auto srcSel = m_selections.at(i);
+         auto dstSel = m_selections2.at(i);
+
+         for( int w=0; w<=srcSel.Width(); w++ )
+         {
+            for( int h=0; h<=srcSel.Height(); h++ )
+            {
+               auto clr = m_image.GetPixel( srcSel.left + w, srcSel.top + h );
+               m_image2.SetPixel( dstSel.left + w, dstSel.top + h, clr );
+            }
+         }
+      }
+
+      OnSelectionClear();
    }
 
    void CProjectView::OnMouseMove( UINT nFlags, CPoint point )

@@ -62,7 +62,6 @@ public:
    afx_msg void OnImageOpen();
    afx_msg void OnImageReset();
    afx_msg void OnSelectionClear();
-   afx_msg void OnProcessEntireImage();
    afx_msg void OnProcessSelection();
    afx_msg void OnSelectionAutoselect();
 
