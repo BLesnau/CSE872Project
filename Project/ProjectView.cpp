@@ -13,6 +13,7 @@
 #include "ProjectView.h"
 #include <direct.h>
 #include <atlimage.h>
+#include <openbr/openbr.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
