@@ -13,11 +13,13 @@
 #include "ProjectView.h"
 #include <direct.h>
 #include <atlimage.h>
-#include <openbr/openbr.h>
+#include "br_interface.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
 
 
 // CProjectView
@@ -272,6 +274,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       Invalidate();
    }
 
+   // auto-select -- use openbr to do some feature detection
    void CProjectView::OnSelectionAutoselect()
    {
       if( !m_bValidImage || !m_bValidImage2 )
@@ -298,7 +301,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
             m_selections2.push_back( rect2 );
          }
       }
-
+      
       Invalidate();
    }
 
@@ -310,6 +313,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       Invalidate();
    }
 
+   // process selection -- todo -- link poisson code
    void CProjectView::OnProcessSelection()
    {
       if( !m_bValidImage || !m_bValidImage2 )
@@ -324,6 +328,8 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
+      CRect outRect;
+      detectPoints(m_image, outRect);
       for( int i=0; i<m_selections.size(); i++ )
       {
          auto srcSel = m_selections.at(i);

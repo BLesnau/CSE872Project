@@ -10,6 +10,7 @@
 
 #include "ProjectDoc.h"
 #include "ProjectView.h"
+#include "br_interface.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,6 +44,7 @@ CProjectApp::CProjectApp()
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
 	SetAppID(_T("Project.AppID.NoVersion"));
 
+    init();
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }
@@ -121,6 +123,8 @@ BOOL CProjectApp::InitInstance()
 	// The one and only window has been initialized, so show and update it
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
+
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand
 	return TRUE;
@@ -130,7 +134,7 @@ int CProjectApp::ExitInstance()
 {
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
-
+    destruct();
 	return CWinApp::ExitInstance();
 }
 
