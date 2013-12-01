@@ -230,7 +230,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return FALSE;
       }
 
-      Invalidate(FALSE);
+      Invalidate();
 
       return TRUE;
    }
@@ -269,7 +269,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       CopyImage( &m_origImage, &m_image );
       CopyImage( &m_origImage2, &m_image2 );
 
-      Invalidate(FALSE);
+      Invalidate();
    }
 
    void CProjectView::OnSelectionAutoselect()
@@ -299,7 +299,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          }
       }
 
-      Invalidate(FALSE);
+      Invalidate();
    }
 
    void CProjectView::OnSelectionClear()
@@ -307,7 +307,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       m_selections.clear();
       m_selections2.clear();
 
-      Invalidate(FALSE);
+      Invalidate();
    }
 
    void CProjectView::OnProcessSelection()
@@ -403,7 +403,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          m_dragSelection.bottom = m_dragSelection.top;
       }
 
-      Invalidate(FALSE);
+      Invalidate();
    }
 
    void CProjectView::OnLButtonUp( UINT nFlags, CPoint point )
@@ -445,7 +445,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          m_dragState = IDLE;
       }
 
-      Invalidate(FALSE);
+      Invalidate();
    }
 
    void CProjectView::CorrectDragRect( CRect* rect )
