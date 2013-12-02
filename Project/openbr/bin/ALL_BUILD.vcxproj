@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGUID>{FAA539DC-5AB3-4997-8901-D3B027AC6208}</ProjectGUID>
+    <ProjectGUID>{20A28DB9-D1DF-40E4-9931-BED225E7B48D}</ProjectGUID>
     <Keyword>Win32Proj</Keyword>
     <Platform>Win32</Platform>
     <ProjectName>ALL_BUILD</ProjectName>
@@ -60,7 +60,7 @@
     </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -70,7 +70,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -80,7 +80,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -90,7 +90,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -100,9 +100,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CustomBuild Include="..\CMakeLists.txt">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -HC:/Projects/GitHub/openbr -BC:/Projects/GitHub/openbr/builds2 --check-stamp-file C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -HE:/Charles/minimal_checkout/openbr -BE:/Charles/minimal_checkout/openbr/build_vs2010_32 --check-stamp-file E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -110,11 +110,11 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/CMakeLists.txt;C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Core\Qt5CoreConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Core\Qt5CoreConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Gui\Qt5GuiConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Gui\Qt5GuiConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Network\Qt5NetworkConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Network\Qt5NetworkConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Sql\Qt5SqlConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Sql\Qt5SqlConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Svg\Qt5SvgConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Svg\Qt5SvgConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Widgets\Qt5WidgetsConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Widgets\Qt5WidgetsConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Xml\Qt5XmlConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Xml\Qt5XmlConfig.cmake;C:\opencv\build\OpenCVConfig-version.cmake;C:\opencv\build\OpenCVConfig.cmake;C:\opencv\build\x86\vc10\lib\OpenCVConfig.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPack.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPackComponent.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/CMakeLists.txt</Message>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/CMakeLists.txt;E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Core\Qt5CoreConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Core\Qt5CoreConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Gui\Qt5GuiConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Gui\Qt5GuiConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Network\Qt5NetworkConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Network\Qt5NetworkConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Sql\Qt5SqlConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Sql\Qt5SqlConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Svg\Qt5SvgConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Svg\Qt5SvgConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Widgets\Qt5WidgetsConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Widgets\Qt5WidgetsConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Xml\Qt5XmlConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Xml\Qt5XmlConfig.cmake;C:\opencv\opencv_246\build\OpenCVConfig-version.cmake;C:\opencv\opencv_246\build\OpenCVConfig.cmake;C:\opencv\opencv_246\build\x86\vc10\lib\OpenCVConfig.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPack.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPackComponent.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -HC:/Projects/GitHub/openbr -BC:/Projects/GitHub/openbr/builds2 --check-stamp-file C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -HE:/Charles/minimal_checkout/openbr -BE:/Charles/minimal_checkout/openbr/build_vs2010_32 --check-stamp-file E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -122,11 +122,11 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/CMakeLists.txt;C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Core\Qt5CoreConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Core\Qt5CoreConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Gui\Qt5GuiConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Gui\Qt5GuiConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Network\Qt5NetworkConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Network\Qt5NetworkConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Sql\Qt5SqlConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Sql\Qt5SqlConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Svg\Qt5SvgConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Svg\Qt5SvgConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Widgets\Qt5WidgetsConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Widgets\Qt5WidgetsConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Xml\Qt5XmlConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Xml\Qt5XmlConfig.cmake;C:\opencv\build\OpenCVConfig-version.cmake;C:\opencv\build\OpenCVConfig.cmake;C:\opencv\build\x86\vc10\lib\OpenCVConfig.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPack.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPackComponent.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/CMakeLists.txt</Message>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/CMakeLists.txt;E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Core\Qt5CoreConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Core\Qt5CoreConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Gui\Qt5GuiConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Gui\Qt5GuiConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Network\Qt5NetworkConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Network\Qt5NetworkConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Sql\Qt5SqlConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Sql\Qt5SqlConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Svg\Qt5SvgConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Svg\Qt5SvgConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Widgets\Qt5WidgetsConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Widgets\Qt5WidgetsConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Xml\Qt5XmlConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Xml\Qt5XmlConfig.cmake;C:\opencv\opencv_246\build\OpenCVConfig-version.cmake;C:\opencv\opencv_246\build\OpenCVConfig.cmake;C:\opencv\opencv_246\build\x86\vc10\lib\OpenCVConfig.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPack.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPackComponent.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -HC:/Projects/GitHub/openbr -BC:/Projects/GitHub/openbr/builds2 --check-stamp-file C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -HE:/Charles/minimal_checkout/openbr -BE:/Charles/minimal_checkout/openbr/build_vs2010_32 --check-stamp-file E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -134,11 +134,11 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/CMakeLists.txt;C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Core\Qt5CoreConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Core\Qt5CoreConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Gui\Qt5GuiConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Gui\Qt5GuiConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Network\Qt5NetworkConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Network\Qt5NetworkConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Sql\Qt5SqlConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Sql\Qt5SqlConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Svg\Qt5SvgConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Svg\Qt5SvgConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Widgets\Qt5WidgetsConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Widgets\Qt5WidgetsConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Xml\Qt5XmlConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Xml\Qt5XmlConfig.cmake;C:\opencv\build\OpenCVConfig-version.cmake;C:\opencv\build\OpenCVConfig.cmake;C:\opencv\build\x86\vc10\lib\OpenCVConfig.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPack.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPackComponent.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/CMakeLists.txt</Message>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/CMakeLists.txt;E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Core\Qt5CoreConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Core\Qt5CoreConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Gui\Qt5GuiConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Gui\Qt5GuiConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Network\Qt5NetworkConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Network\Qt5NetworkConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Sql\Qt5SqlConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Sql\Qt5SqlConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Svg\Qt5SvgConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Svg\Qt5SvgConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Widgets\Qt5WidgetsConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Widgets\Qt5WidgetsConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Xml\Qt5XmlConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Xml\Qt5XmlConfig.cmake;C:\opencv\opencv_246\build\OpenCVConfig-version.cmake;C:\opencv\opencv_246\build\OpenCVConfig.cmake;C:\opencv\opencv_246\build\x86\vc10\lib\OpenCVConfig.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPack.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPackComponent.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -HC:/Projects/GitHub/openbr -BC:/Projects/GitHub/openbr/builds2 --check-stamp-file C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -HE:/Charles/minimal_checkout/openbr -BE:/Charles/minimal_checkout/openbr/build_vs2010_32 --check-stamp-file E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -146,12 +146,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/CMakeLists.txt;C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Core\Qt5CoreConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Core\Qt5CoreConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Gui\Qt5GuiConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Gui\Qt5GuiConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Network\Qt5NetworkConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Network\Qt5NetworkConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Sql\Qt5SqlConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Sql\Qt5SqlConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Svg\Qt5SvgConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Svg\Qt5SvgConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Widgets\Qt5WidgetsConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Widgets\Qt5WidgetsConfig.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Xml\Qt5XmlConfigVersion.cmake;C:\Qt\5.1.1\msvc2010_opengl\lib\cmake\Qt5Xml\Qt5XmlConfig.cmake;C:\opencv\build\OpenCVConfig-version.cmake;C:\opencv\build\OpenCVConfig.cmake;C:\opencv\build\x86\vc10\lib\OpenCVConfig.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPack.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPackComponent.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/CMakeLists.txt;E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Concurrent\Qt5ConcurrentConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Core\Qt5CoreConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Core\Qt5CoreConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Gui\Qt5GuiConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Gui\Qt5GuiConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Network\Qt5NetworkConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Network\Qt5NetworkConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Sql\Qt5SqlConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Sql\Qt5SqlConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Svg\Qt5SvgConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Svg\Qt5SvgConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Widgets\Qt5WidgetsConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Widgets\Qt5WidgetsConfig.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Xml\Qt5XmlConfigVersion.cmake;C:\Qt\Qt5.1.1\5.1.1\msvc2010\lib\cmake\Qt5Xml\Qt5XmlConfig.cmake;C:\opencv\opencv_246\build\OpenCVConfig-version.cmake;C:\opencv\opencv_246\build\OpenCVConfig.cmake;C:\opencv\opencv_246\build\x86\vc10\lib\OpenCVConfig.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPack.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CPackComponent.cmake;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Templates\CPackConfig.cmake.in;E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\generate.stamp</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\..\builds2\CMakeFiles\ff1e3b6f599dfb23981676103cdb4f9d\ALL_BUILD.rule">
+    <CustomBuild Include="..\..\..\build_vs2010_32\CMakeFiles\b4c72fc3e59044faa6f7eb9a5948dd26\ALL_BUILD.rule">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build all projects</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 :cmEnd
@@ -160,8 +160,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/ff1e3b6f599dfb23981676103cdb4f9d/ALL_BUILD.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\ALL_BUILD</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/b4c72fc3e59044faa6f7eb9a5948dd26/ALL_BUILD.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\ALL_BUILD</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build all projects</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 :cmEnd
@@ -170,8 +170,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/ff1e3b6f599dfb23981676103cdb4f9d/ALL_BUILD.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\ALL_BUILD</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/b4c72fc3e59044faa6f7eb9a5948dd26/ALL_BUILD.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\ALL_BUILD</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Build all projects</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
 :cmEnd
@@ -180,8 +180,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/ff1e3b6f599dfb23981676103cdb4f9d/ALL_BUILD.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\ALL_BUILD</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/b4c72fc3e59044faa6f7eb9a5948dd26/ALL_BUILD.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\ALL_BUILD</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Build all projects</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
 :cmEnd
@@ -190,16 +190,16 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/ff1e3b6f599dfb23981676103cdb4f9d/ALL_BUILD.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\ALL_BUILD</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/b4c72fc3e59044faa6f7eb9a5948dd26/ALL_BUILD.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\ALL_BUILD</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="CMakeFiles\ALL_BUILD" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/build/stasm.vcxproj">
-      <Project>CA3BFA2D-2E91-4972-A5CC-4361D59F6F8D</Project>
+    <ProjectReference Include="E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/build/stasm.vcxproj">
+      <Project>3CFF52A5-C61B-4D27-9D10-E460A3FAC9A7</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

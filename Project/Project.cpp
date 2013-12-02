@@ -44,7 +44,7 @@ CProjectApp::CProjectApp()
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
 	SetAppID(_T("Project.AppID.NoVersion"));
 
-    init();
+    //brInterface::init();
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }
@@ -134,7 +134,7 @@ int CProjectApp::ExitInstance()
 {
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
-    destruct();
+    brInterface::destruct();
 	return CWinApp::ExitInstance();
 }
 

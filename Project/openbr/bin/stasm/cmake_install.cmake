@@ -1,8 +1,8 @@
-# Install script for directory: C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/stasm
+# Install script for directory: E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/stasm
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "C:/Projects/GitHub/openbr/builds2/install")
+  SET(CMAKE_INSTALL_PREFIX "E:/Charles/minimal_checkout/openbr/build_vs2010_32/install")
 ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
 STRING(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

@@ -1,10 +1,28 @@
 #pragma once
 
 #include <atlimage.h>
+#include <vector>
 
-void init();
+namespace br
+{
+    class Transform;
+}
 
-void destruct();
+class brInterface
+{
+public:
+    brInterface();
 
-void detectPoints(CImage & img, CRect & region);
+    static void init();
+
+    static void destruct();
+
+    br::Transform * keyPointDetector;
+
+    
+    void pointCorrespondence(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
+
+};
+
+
 
