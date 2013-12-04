@@ -13,11 +13,13 @@
 #include "ProjectView.h"
 #include <direct.h>
 #include <atlimage.h>
-#include <openbr/openbr.h>
+#include "br_interface.h"
+#include <sstream>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
 
 
 // CProjectView
@@ -90,6 +92,10 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          for( int i=0; i<(int)m_selections.size(); i++ )
          {
             auto selection = m_selections.at( i );
+            std::ostringstream boxOut; 
+            boxOut << "Total: " << m_selections.size() << " Drawing: " << i << "\t" << selection.left << " " << selection.right << " " << selection.bottom << " " << selection.top << std::endl;
+            OutputDebugStringA(boxOut.str().c_str());
+
             for( int x=selection.left; x<selection.right; x++ )
             {
                for( int y=selection.top; y<selection.bottom; y++ )
@@ -118,7 +124,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
                }
             }
          }
-
+         
          if( m_dragState == DRAGGING )
          {
             CRect tmpSelection = m_dragSelection;
@@ -272,6 +278,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       Invalidate();
    }
 
+   // auto-select -- use openbr to do some feature detection
    void CProjectView::OnSelectionAutoselect()
    {
       if( !m_bValidImage || !m_bValidImage2 )
@@ -284,7 +291,13 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      auto left = min(m_image.GetWidth()-1, 25);
+      detection.pointCorrespondence(m_image, m_image2, m_selections, m_selections2);
+
+      std::ostringstream postCallOut;
+      postCallOut << "received " << m_selections.size() << " vs. " << m_selections2.size() << " output" << std::endl;
+      ::OutputDebugStringA(postCallOut.str().c_str());
+
+/*      auto left = min(m_image.GetWidth()-1, 25);
       auto top = min(m_image.GetHeight()-1, 25);
 
       if( m_image.GetWidth() - 1 >= left + 50 && m_image.GetHeight() - 1 >= top + 50 )
@@ -297,8 +310,8 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
             auto rect2 = CRect( 0, 0, 50, 50 );
             m_selections2.push_back( rect2 );
          }
-      }
-
+      }*/
+      
       Invalidate();
    }
 
@@ -310,6 +323,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       Invalidate();
    }
 
+   // process selection -- todo -- link poisson code
    void CProjectView::OnProcessSelection()
    {
       if( !m_bValidImage || !m_bValidImage2 )
@@ -324,6 +338,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
+      CRect outRect;
       for( int i=0; i<m_selections.size(); i++ )
       {
          auto srcSel = m_selections.at(i);

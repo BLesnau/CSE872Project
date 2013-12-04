@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGUID>{BE296E87-FAA0-4EAE-8E43-D0392978616B}</ProjectGUID>
+    <ProjectGUID>{47A72723-449A-47E0-90F3-EDA8533DEE99}</ProjectGUID>
     <Keyword>Win32Proj</Keyword>
     <Platform>Win32</Platform>
     <ProjectName>INSTALL</ProjectName>
@@ -60,7 +60,7 @@
     </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -82,7 +82,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -104,7 +104,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -126,7 +126,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -147,7 +147,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\..\builds2\CMakeFiles\ff1e3b6f599dfb23981676103cdb4f9d\INSTALL_force.rule">
+    <CustomBuild Include="..\..\..\build_vs2010_32\CMakeFiles\b4c72fc3e59044faa6f7eb9a5948dd26\INSTALL_force.rule">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 cd .
@@ -158,8 +158,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/ff1e3b6f599dfb23981676103cdb4f9d/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\INSTALL_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/b4c72fc3e59044faa6f7eb9a5948dd26/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\INSTALL_force</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 cd .
@@ -170,8 +170,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/ff1e3b6f599dfb23981676103cdb4f9d/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\INSTALL_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/b4c72fc3e59044faa6f7eb9a5948dd26/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\INSTALL_force</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
 cd .
@@ -182,8 +182,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/ff1e3b6f599dfb23981676103cdb4f9d/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\INSTALL_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/b4c72fc3e59044faa6f7eb9a5948dd26/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\INSTALL_force</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
 cd .
@@ -194,13 +194,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/ff1e3b6f599dfb23981676103cdb4f9d/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\INSTALL_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/b4c72fc3e59044faa6f7eb9a5948dd26/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\CMakeFiles\INSTALL_force</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/build/ALL_BUILD.vcxproj">
-      <Project>FAA539DC-5AB3-4997-8901-D3B027AC6208</Project>
+    <ProjectReference Include="E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/build/ALL_BUILD.vcxproj">
+      <Project>20A28DB9-D1DF-40E4-9931-BED225E7B48D</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

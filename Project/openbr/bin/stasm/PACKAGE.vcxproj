@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGUID>{98EE8A58-CEA3-4401-A786-2AB6E44769C8}</ProjectGUID>
+    <ProjectGUID>{EC100A72-4CDA-4AC1-BE0A-D950AE8DC93B}</ProjectGUID>
     <Keyword>Win32Proj</Keyword>
     <Platform>Win32</Platform>
     <ProjectName>PACKAGE</ProjectName>
@@ -60,7 +60,7 @@
     </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -70,9 +70,9 @@
     <PostBuildEvent>
       <Message></Message>
       <Command>setlocal
-cd C:\Projects\GitHub\openbr\builds2
+cd E:\Charles\minimal_checkout\openbr\build_vs2010_32
 if %errorlevel% neq 0 goto :cmEnd
-C:
+E:
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files (x86)\CMake 2.8\bin\cpack.exe" -C $(Configuration) --config ./CPackConfig.cmake
 if %errorlevel% neq 0 goto :cmEnd
@@ -86,7 +86,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -96,9 +96,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <PostBuildEvent>
       <Message></Message>
       <Command>setlocal
-cd C:\Projects\GitHub\openbr\builds2
+cd E:\Charles\minimal_checkout\openbr\build_vs2010_32
 if %errorlevel% neq 0 goto :cmEnd
-C:
+E:
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files (x86)\CMake 2.8\bin\cpack.exe" -C $(Configuration) --config ./CPackConfig.cmake
 if %errorlevel% neq 0 goto :cmEnd
@@ -112,7 +112,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -122,9 +122,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <PostBuildEvent>
       <Message></Message>
       <Command>setlocal
-cd C:\Projects\GitHub\openbr\builds2
+cd E:\Charles\minimal_checkout\openbr\build_vs2010_32
 if %errorlevel% neq 0 goto :cmEnd
-C:
+E:
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files (x86)\CMake 2.8\bin\cpack.exe" -C $(Configuration) --config ./CPackConfig.cmake
 if %errorlevel% neq 0 goto :cmEnd
@@ -138,7 +138,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>C:/opencv/build/include;C:/opencv/build/include/opencv;C:/Projects/GitHub/openbr/3rdparty/alphanum;C:/Projects/GitHub/openbr/.;C:/Projects/GitHub/openbr/builds2/openbr;C:/Projects/GitHub/openbr/3rdparty/eigen-eigen-5097c01bcdc4;C:/Projects/GitHub/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/opencv/opencv_246/build/include;C:/opencv/opencv_246/build/include/opencv;E:/Charles/minimal_checkout/openbr/3rdparty/alphanum;E:/Charles/minimal_checkout/openbr/.;E:/Charles/minimal_checkout/openbr/build_vs2010_32/openbr;E:/Charles/minimal_checkout/openbr/3rdparty/eigen-eigen-5097c01bcdc4;E:/Charles/minimal_checkout/openbr/3rdparty/http-parser-2.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -148,9 +148,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <PostBuildEvent>
       <Message></Message>
       <Command>setlocal
-cd C:\Projects\GitHub\openbr\builds2
+cd E:\Charles\minimal_checkout\openbr\build_vs2010_32
 if %errorlevel% neq 0 goto :cmEnd
-C:
+E:
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files (x86)\CMake 2.8\bin\cpack.exe" -C $(Configuration) --config ./CPackConfig.cmake
 if %errorlevel% neq 0 goto :cmEnd
@@ -163,7 +163,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\..\..\builds2\CMakeFiles\6165ed461ae8e353ef68689a4d508830\PACKAGE_force.rule">
+    <CustomBuild Include="..\..\..\..\build_vs2010_32\CMakeFiles\637f9e893dec87c0189b01dbe33d3f20\PACKAGE_force.rule">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 cd .
@@ -174,8 +174,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/6165ed461ae8e353ef68689a4d508830/PACKAGE_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\stasm\CMakeFiles\PACKAGE_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/637f9e893dec87c0189b01dbe33d3f20/PACKAGE_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\stasm\CMakeFiles\PACKAGE_force</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
 cd .
@@ -186,8 +186,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/6165ed461ae8e353ef68689a4d508830/PACKAGE_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\stasm\CMakeFiles\PACKAGE_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/637f9e893dec87c0189b01dbe33d3f20/PACKAGE_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\stasm\CMakeFiles\PACKAGE_force</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
 cd .
@@ -198,8 +198,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/6165ed461ae8e353ef68689a4d508830/PACKAGE_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\stasm\CMakeFiles\PACKAGE_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/637f9e893dec87c0189b01dbe33d3f20/PACKAGE_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\stasm\CMakeFiles\PACKAGE_force</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
 cd .
@@ -210,13 +210,13 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Projects/GitHub/openbr/builds2/CMakeFiles/6165ed461ae8e353ef68689a4d508830/PACKAGE_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Projects\GitHub\openbr\3rdparty\stasm4.0.0\build\stasm\CMakeFiles\PACKAGE_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:/Charles/minimal_checkout/openbr/build_vs2010_32/CMakeFiles/637f9e893dec87c0189b01dbe33d3f20/PACKAGE_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:\Charles\minimal_checkout\openbr\3rdparty\stasm4.0.0\build\stasm\CMakeFiles\PACKAGE_force</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:/Projects/GitHub/openbr/3rdparty/stasm4.0.0/build/ALL_BUILD.vcxproj">
-      <Project>FAA539DC-5AB3-4997-8901-D3B027AC6208</Project>
+    <ProjectReference Include="E:/Charles/minimal_checkout/openbr/3rdparty/stasm4.0.0/build/ALL_BUILD.vcxproj">
+      <Project>20A28DB9-D1DF-40E4-9931-BED225E7B48D</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

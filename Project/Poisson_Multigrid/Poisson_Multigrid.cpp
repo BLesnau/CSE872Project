@@ -177,3 +177,8 @@ int main()
 }
 
 
+void solveEquations(cpt::Matrix<double,2>& A, cpt::Matrix<double,2> & b, cpt::Matrix<double,2>& x)
+{
+
+}
+

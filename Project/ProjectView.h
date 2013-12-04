@@ -5,6 +5,7 @@
 #pragma once
 #include <atlimage.h>
 #include <vector>
+#include "br_interface.h"
 
 class CProjectView : public CView
 {
@@ -28,6 +29,8 @@ public:
    std::vector<CRect> m_selections;
    std::vector<CRect> m_selections2;
    std::vector<COLORREF> m_colors;
+
+   brInterface detection;
 
    // Operations
 public:
