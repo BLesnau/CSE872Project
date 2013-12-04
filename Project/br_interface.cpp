@@ -120,8 +120,8 @@ void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CR
     // Detect keypoints in both images
     keyPointDetector->project(tList, tList);
     
-    Gallery * out = Gallery::make("e:/Charles/");
-    Gallery * metaOut = Gallery::make("e:/Charles/test_output.txt");
+    Gallery * out = Gallery::make("./");
+    Gallery * metaOut = Gallery::make("./test_output.txt");
 
     out->writeBlock(tList);
     metaOut->writeBlock(tList);
@@ -284,7 +284,7 @@ static char * argv[] = {arg0, arg1, arg2};
 
 void brInterface::init()
 {
-    br_initialize(argc,argv, "E:/Charles/872_project/CSE872Project/Project/openbr");
+    br_initialize(argc,argv, "./openbr/");
 }
 
 void brInterface::destruct()
