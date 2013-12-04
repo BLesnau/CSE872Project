@@ -284,7 +284,20 @@ static char * argv[] = {arg0, arg1, arg2};
 
 void brInterface::init()
 {
-    br_initialize(argc,argv, "./openbr/");
+    // get the location of the .exe
+    char szDirectory[MAX_PATH]="";
+    GetModuleFileNameA(NULL, szDirectory, MAX_PATH);
+    std::string path = szDirectory;
+    int slash_idx = path.rfind("\\");
+    // remove application name/first slash
+    path = path.substr(0, slash_idx);
+    // remove build type
+    slash_idx = path.rfind("\\");
+    path = path.substr(0, slash_idx);
+    path += "/openbr/";
+
+    ::OutputDebugStringA(path.c_str());
+    br_initialize(argc,argv, path.c_str());
 }
 
 void brInterface::destruct()
