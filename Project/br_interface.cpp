@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "br_interface.h"
+#include "Poisson_Multigrid\poisson_multigrid.h"
 
 // A min macro is clearly helpful, and not just obnoxious
 #undef min
@@ -9,6 +10,7 @@
 #include <openbr/openbr_plugin.h>
 
 #include <opencv2/core/types_c.h>
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace br;
 
@@ -64,7 +66,7 @@ void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength,
     ::OutputDebugStringA(bOut.str().c_str());
     //TRACE("bbox dimensions %d %d %d %d", bbox.left, bbox.bottom, bbox.right, bbox.top);
 }
-static int count=0;
+static int cnt=0;
 void templateFromCImage(CImage & input, br::Template & output)
 {
     int imHeight = input.GetHeight();
@@ -93,7 +95,7 @@ void templateFromCImage(CImage & input, br::Template & output)
     output.clear();
     output.append(img);
     std::ostringstream nameStream;
-    nameStream << "test_" << count++ << ".jpg";
+    nameStream << "test_" << cnt++ << ".jpg";
     output.file.name = nameStream.str().c_str();
 }
 
@@ -163,6 +165,108 @@ void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CR
     std::ostringstream finalout;
     finalout << "src boxes size " << srcRegions.size() << " dst boxes size " << dstRegions.size() << std::endl;
     OutputDebugStringA(finalout.str().c_str());
+}
+
+void clone(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions)
+{
+    Template tSrc;
+    templateFromCImage(src, tSrc);
+    Template tDst;
+    templateFromCImage(dst, tDst);
+
+    cv::Mat srcIm = tSrc.m();
+    cv::Mat dstIm = tDst.m();
+
+    std::vector<cv::Mat> srcChannels;
+    std::vector<cv::Mat> dstChannels;
+
+    cv::split(srcIm, srcChannels);
+    cv::split(dstIm, dstChannels);
+
+    for (int channel=0; channel < srcChannels.size(); channel++)
+    {
+        // Compute the laplacian of the source image
+        cv::Mat laplacian;
+        cv::Mat dstIm = dstChannels[channel];
+        cv::Laplacian(srcChannels[channel], laplacian, CV_32F);
+
+        for (int patchIdx=0; patchIdx < srcRegions.size() ;patchIdx++)
+        {
+            int nPixels = srcRegions[patchIdx].Width() * srcRegions[patchIdx].Height();
+
+            // Set up A and b for the current region
+            cpt::Matrix<double,2> A(nPixels, nPixels);;
+            cpt::Matrix<double,2> b(nPixels, 1);
+            cpt::Matrix<double,2> x(nPixels, 1);
+
+            int src_x = srcRegions[patchIdx].left;
+            int src_y = srcRegions[patchIdx].bottom;
+
+            CPoint srcOrigin = srcRegions[patchIdx].TopLeft();
+            CPoint dstOrigin = dstRegions[patchIdx].TopLeft();
+
+            for (int i = 0; i < srcRegions[patchIdx].Width() ;i++)
+            {
+                for (int j = 0; j < srcRegions[patchIdx].Height(); j++)
+                {
+                    // Index of the current point, in a row-major ordering 
+                    int idx = i + j * srcRegions[patchIdx].Width();
+
+                    // discrete laplacian:
+                    // 0  1  0
+                    // 1 -4  1
+                    // 0  1  0
+                    A(idx, idx) = -4;
+                    // retrieve the value of the laplacian for this pixel
+                    b(idx,1) = laplacian.at<float>(i + srcOrigin.x, j + srcOrigin.y);
+                    // i + 1
+                    if ((i + 1) < srcRegions[patchIdx].Width())
+                        A(idx, i + 1 + j * srcRegions[patchIdx].Width());
+                    else
+                        b(idx,1) -= dstIm.at<unsigned char> (i+1 + dstOrigin.x, j + dstOrigin.y);
+                    // i - 1
+                    if ((i-1) >= 0)
+                        A(idx, i - 1 + j * srcRegions[patchIdx].Width() );
+                    else
+                        b(idx,1) -= dstIm.at<unsigned char> (i-1 + dstOrigin.x, j + dstOrigin.y);
+                    // j + 1
+                    if ((j+1) < srcRegions[patchIdx].Height())
+                        A(idx, i + (j+1) * srcRegions[patchIdx].Width() );
+                    else
+                        b(idx,1) -= dstIm.at<unsigned char>(i + dstOrigin.x,j+1 + dstOrigin.y);
+                    // j - 1
+                    if ((j-1) >= 0)
+                        A(idx, i + (j-1) * srcRegions[patchIdx].Width() );
+                    else
+                        b(idx,1) -= dstIm.at<unsigned char>(i + dstOrigin.x, j-1 + dstOrigin.y);
+
+                }
+            }
+
+        
+            // Solve for x (new values of the pixels in the current channel of the dst image)
+            solveEquations(A, b, x);
+
+            // Copy the new values back into dst
+            for (int i=dstRegions[patchIdx].top; i >= dstRegions[patchIdx].bottom; i--)
+            {
+                for (int j=dstRegions[patchIdx].left; j < dstRegions[patchIdx].right; j++)
+                {
+                    int idx = i + j * srcRegions[patchIdx].Width();
+
+                    double val = x(idx,1);
+                    COLORREF current = dst.GetPixel(j,i);
+                    int bgr[3];
+                    bgr[2] = GetRValue(current);
+                    bgr[1] = GetGValue(current);
+                    bgr[0] = GetBValue(current);
+                    bgr[channel] = val;
+                    dst.SetPixel(j,i, RGB(bgr[2], bgr[1], bgr[0]));
+                }
+            }// dstRegions[patchIdx]
+        } // patches
+    } // channels
+
 }
 
 brInterface::brInterface()

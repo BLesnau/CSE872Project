@@ -94,8 +94,8 @@ xcopy "$(ProjectDir)openbr\bin\platforms\*.dll" "$(OutDir)" /y</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)opencv\lib;$(ProjectDir)openbr\lib;$(ProjectDir)qt\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openbr.lib;stasm.lib;opencv_core246.lib;Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)opencv\lib;$(ProjectDir)openbr\lib;$(ProjectDir)qt\lib\;$(ProjeectDir)Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openbr.lib;stasm.lib;opencv_core246.lib;opencv_imgproc246.lib;Poisson_Multigrid.lib;Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
