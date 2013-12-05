@@ -352,7 +352,12 @@ void clone2(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::ve
                     bgr[2] = GetRValue(current);
                     bgr[1] = GetGValue(current);
                     bgr[0] = GetBValue(current);
-                    bgr[channel] = x(idx);
+                    double val = x(idx);
+                    if (val < 0)
+                        val = 0;
+                    if (val >= 255)
+                        val = 255;
+                    bgr[channel] = val;
                     dst.SetPixel(j + dstOrigin.x,i + dstOrigin.y, RGB(bgr[2], bgr[1], bgr[0]));
                 }
             }// dstRegions[patchIdx]
