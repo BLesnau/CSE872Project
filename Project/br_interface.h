@@ -26,5 +26,6 @@ public:
 
 };
 
+void clone(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
 
 

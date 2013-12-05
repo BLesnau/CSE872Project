@@ -338,6 +338,9 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
+      clone(m_image, m_image2, m_selections, m_selections2);
+
+      /*
       CRect outRect;
       for( int i=0; i<m_selections.size(); i++ )
       {
@@ -353,6 +356,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
             }
          }
       }
+      //*/
 
       OnSelectionClear();
    }

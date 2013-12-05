@@ -5,6 +5,8 @@
 
 #include "cptstd.hpp"
 #include "matrix.hpp"
+
+#include <Windows.h>
 using namespace cpt;
 
 double accuracy = 0.001;        // desired relative accuracy in solution
@@ -27,15 +29,18 @@ void initialize()
     if (power_of_2 != L) {
         L = power_of_2;
         cout << " Setting L = " << L << " (must be a power of 2)" << endl;
+        OutputDebugStringA("L is not a power of 2!");
     }
 
     // create (L+2)x(L+2) matrices and zero them
-    psi = psi_new = rho = Matrix<double,2>(L+2, L+2);
+   // psi = psi_new = rho = Matrix<double,2>(L+2, L+2);
 
-    h = 1 / double(L + 1);      // assume physical size in x and y = 1
+    //h = 1 / double(L + 1);      // assume physical size in x and y = 1
+    h = 1;
     double q = 10;              // point charge
     int i = L / 2;              // center of lattice
-    rho[i][i] = q / (h * h);    // charge density
+    
+ //   rho[i][i] = 0;
 
     steps = 0;
 }
@@ -177,8 +182,64 @@ int main()
 }
 
 
-void solveEquations(cpt::Matrix<double,2>& A, cpt::Matrix<double,2> & b, cpt::Matrix<double,2>& x)
+void solveMultigrid(cpt::Matrix<double, 2> & laplacian, cpt::Matrix<double, 2> & dstIm)
 {
+    // we will zero the interior of the dst image, 
+    for (int i=1; i < (dstIm.dim2() - 1); i++)
+    {
+        for (int j =1; j < (dstIm.dim1() - 1); j++)
+        {
+            dstIm(j,i) = 0;
+        }
+    }
+
+    // and zero the boundary points of the laplacian
+    for (int i=0; i < dstIm.dim1(); i++)
+    {
+        laplacian(i,0) = 0;
+        laplacian(0,i) = 0;
+        laplacian(i, dstIm.dim1() - 1) = 0;
+        laplacian(dstIm.dim1() - 1, i) = 0;
+    }
+
+    // psi and psi_new are intialized with the boundary conditions
+    psi = dstIm;
+    psi_new = dstIm;
+    // rho is initialized with the interior points of the laplacian of the source image
+    rho = laplacian;
+
+    L = dstIm.dim1() - 2;
+    accuracy = 1 * pow(10.0,-14.0);
+    //accuracy = .1;
+    n_smooth = 2;
+
+
+    rho = laplacian;
+
+    
+    initialize();
+    clock_t t0 = clock();
+    // iterative process for finding the solution
+    OutputDebugStringA("Starting optimization...\n");
+    while (true) {
+        for (int i = 0; i < L+2; i++)
+            for (int j = 0; j < L+2; j++)
+                psi_new[i][j] = psi[i][j];
+        two_grid(h, psi, rho);
+        ++steps;
+        // error -- based on difference between last and current psi.
+        double error = relative_error();
+        std::ostringstream lineOut;
+
+        lineOut << " Step No. " << steps << "\tError = " << error << endl;
+        OutputDebugStringA(lineOut.str().c_str());
+        if (steps > 1 && error < accuracy)
+            break;
+    }
+    clock_t t1 = clock();
+    cout << " CPU time = " << double(t1 - t0) / CLOCKS_PER_SEC
+         << " sec" << endl;
+
+    dstIm = psi;
 
 }
-
