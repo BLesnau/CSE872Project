@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "br_interface.h"
-#include "Poisson_Multigrid\poisson_multigrid.h"
 
 // A min macro is clearly helpful, and not just obnoxious
 #undef min
@@ -11,6 +10,8 @@
 
 #include <opencv2/core/types_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include "Poisson_Multigrid\poisson_multigrid.h"
 
 using namespace br;
 
@@ -28,6 +29,40 @@ static int mouthIdx[] ={59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 
 
 static int * metaIndex[] = {leyeIdx, reyeIdx, noseIdx, mouthIdx};
 static int indexSizes[] = {9, 9, 11, 18};
+
+void boundingSquare(CRect & boundingBox)
+{
+    // find the major dimension of the bounding box
+    double major = boundingBox.Width() > boundingBox.Height() ? boundingBox.Width() : boundingBox.Height();
+
+    // log base 2 of the major dimension
+    float two_power = log(major) / log(2.0);
+
+    int majorPower = std::ceil(two_power);
+
+    int side_size = pow(2.0, majorPower) + 2;
+
+    // We expand the bounding box to side_size x side_size while maintaining the same center
+
+    CPoint center = boundingBox.CenterPoint();
+
+    // Difference between the current and desired dimensions
+    int width_delta = side_size - boundingBox.Width();
+    int height_delta = side_size - boundingBox.Height();
+
+    int half_width = width_delta / 2;
+    int half_height= height_delta / 2;
+
+    // Adjust the origin
+    CPoint initialOrigin = boundingBox.TopLeft();
+    boundingBox.top = initialOrigin.y - half_height;
+    boundingBox.left= initialOrigin.x - half_width;
+
+    // And the far sides of the bounding box
+    boundingBox.bottom = boundingBox.top + side_size;
+    boundingBox.right = boundingBox.left + side_size;
+
+}
 
 void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength, CRect & bbox, int width, int height)
 {
@@ -61,9 +96,14 @@ void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength,
     }
 
     std::ostringstream bOut;
-    bOut << "bbox dimensions " << bbox.left << ',' << bbox.bottom << ',' << bbox.right << "," << bbox.top;
+    bOut << "bbox dimensions: " << bbox.left << ',' << bbox.bottom << ',' << bbox.right << "," << bbox.top << std::endl;;
 
     ::OutputDebugStringA(bOut.str().c_str());
+    boundingSquare(bbox);
+
+    std::ostringstream b2;
+    b2 << "Squared bbox dimensions: " << bbox.left << ',' << bbox.bottom << ',' << bbox.right << "," << bbox.top << std::endl << std::endl;
+    ::OutputDebugStringA(b2.str().c_str());
     //TRACE("bbox dimensions %d %d %d %d", bbox.left, bbox.bottom, bbox.right, bbox.top);
 }
 static int cnt=0;
@@ -135,6 +175,10 @@ void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CR
 
     for (int i=0; i < 4; i++)
     {
+        // skipping the nose
+        if (i==2)
+            continue;
+
         CRect srcBox;
         CRect dstBox;
 
@@ -188,80 +232,66 @@ void clone(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vec
         // Compute the laplacian of the source image
         cv::Mat laplacian;
         cv::Mat dstIm = dstChannels[channel];
-        cv::Laplacian(srcChannels[channel], laplacian, CV_32F);
+        cv::Mat srcIm = srcChannels[channel];
 
-        for (int patchIdx=0; patchIdx < srcRegions.size() ;patchIdx++)
+        laplacian.create(srcIm.rows, srcIm.cols, CV_64FC1);
+
+        for(int i=1; i < srcIm.rows-1; i++)
+        {
+            for (int j=1; j < srcIm.cols-1;j++)
+            {
+                // Discrete laplacian:
+                // 0  1  0
+                // 1 -4  1
+                // 0  1  0
+                double value = -4.0 * srcIm.at<unsigned char>(i,j);
+                value += double(srcIm.at<unsigned char>(i+1,j));
+                value += double(srcIm.at<unsigned char>(i-1,j));
+                value += double(srcIm.at<unsigned char>(i,j+1));
+                value += double(srcIm.at<unsigned char>(i,j-1));
+                laplacian.at<double>(i,j) = value;
+            }
+        }
+
+        //cv::Laplacian(srcChannels[channel], laplacian, CV_32F);
+
+        for (int patchIdx=0; patchIdx < srcRegions.size(); patchIdx++)
         {
             int nPixels = srcRegions[patchIdx].Width() * srcRegions[patchIdx].Height();
 
             // Set up A and b for the current region
-            cpt::Matrix<double,2> A(nPixels, nPixels);;
-            cpt::Matrix<double,2> b(nPixels, 1);
-            cpt::Matrix<double,2> x(nPixels, 1);
+            cpt::Matrix<double,2> laplacianPatch(srcRegions[patchIdx].Width(), srcRegions[patchIdx].Height());
+            cpt::Matrix<double,2> destinationPatch(dstRegions[patchIdx].Width(), dstRegions[patchIdx].Height());
 
-            int src_x = srcRegions[patchIdx].left;
-            int src_y = srcRegions[patchIdx].bottom;
-
-            CPoint srcOrigin = srcRegions[patchIdx].TopLeft();
             CPoint dstOrigin = dstRegions[patchIdx].TopLeft();
-
-            for (int i = 0; i < srcRegions[patchIdx].Width() ;i++)
+            CPoint srcOrigin = srcRegions[patchIdx].TopLeft();
+            for (int i = 0; i < srcRegions[patchIdx].Height() ;i++)
             {
-                for (int j = 0; j < srcRegions[patchIdx].Height(); j++)
+                for (int j = 0; j < srcRegions[patchIdx].Width(); j++)
                 {
-                    // Index of the current point, in a row-major ordering 
-                    int idx = i + j * srcRegions[patchIdx].Width();
-
-                    // discrete laplacian:
-                    // 0  1  0
-                    // 1 -4  1
-                    // 0  1  0
-                    A(idx, idx) = -4;
-                    // retrieve the value of the laplacian for this pixel
-                    b(idx,1) = laplacian.at<float>(i + srcOrigin.x, j + srcOrigin.y);
-                    // i + 1
-                    if ((i + 1) < srcRegions[patchIdx].Width())
-                        A(idx, i + 1 + j * srcRegions[patchIdx].Width());
-                    else
-                        b(idx,1) -= dstIm.at<unsigned char> (i+1 + dstOrigin.x, j + dstOrigin.y);
-                    // i - 1
-                    if ((i-1) >= 0)
-                        A(idx, i - 1 + j * srcRegions[patchIdx].Width() );
-                    else
-                        b(idx,1) -= dstIm.at<unsigned char> (i-1 + dstOrigin.x, j + dstOrigin.y);
-                    // j + 1
-                    if ((j+1) < srcRegions[patchIdx].Height())
-                        A(idx, i + (j+1) * srcRegions[patchIdx].Width() );
-                    else
-                        b(idx,1) -= dstIm.at<unsigned char>(i + dstOrigin.x,j+1 + dstOrigin.y);
-                    // j - 1
-                    if ((j-1) >= 0)
-                        A(idx, i + (j-1) * srcRegions[patchIdx].Width() );
-                    else
-                        b(idx,1) -= dstIm.at<unsigned char>(i + dstOrigin.x, j-1 + dstOrigin.y);
-
+                    laplacianPatch(j,i) = laplacian.at<double>(i,j);
+                    destinationPatch(j,i) = dstIm.at<unsigned char> (i + dstOrigin.y,j + dstOrigin.x);
+                    // direct clone
+                    //destinationPatch(j,i) = srcIm.at<unsigned char> (i + srcOrigin.y,j + srcOrigin.x);
+                    srcIm.at<unsigned char> (i + srcOrigin.y,j + srcOrigin.x) = 255;
                 }
             }
-
-        
-            // Solve for x (new values of the pixels in the current channel of the dst image)
-            solveEquations(A, b, x);
+            cv::imwrite("channel_highlight.png", srcIm);
+            cv::imwrite("channel_laplacian.png", laplacian);
+            solveMultigrid(laplacianPatch, destinationPatch);
 
             // Copy the new values back into dst
-            for (int i=dstRegions[patchIdx].top; i >= dstRegions[patchIdx].bottom; i--)
+            for (int i=0; i < destinationPatch.dim2(); i++)
             {
-                for (int j=dstRegions[patchIdx].left; j < dstRegions[patchIdx].right; j++)
+                for (int j=0; j < destinationPatch.dim1(); j++)
                 {
-                    int idx = i + j * srcRegions[patchIdx].Width();
-
-                    double val = x(idx,1);
-                    COLORREF current = dst.GetPixel(j,i);
+                    COLORREF current = dst.GetPixel(j + dstOrigin.x, i + dstOrigin.y);
                     int bgr[3];
                     bgr[2] = GetRValue(current);
                     bgr[1] = GetGValue(current);
                     bgr[0] = GetBValue(current);
-                    bgr[channel] = val;
-                    dst.SetPixel(j,i, RGB(bgr[2], bgr[1], bgr[0]));
+                    bgr[channel] = destinationPatch(j,i);
+                    dst.SetPixel(j + dstOrigin.x,i + dstOrigin.y, RGB(bgr[2], bgr[1], bgr[0]));
                 }
             }// dstRegions[patchIdx]
         } // patches
