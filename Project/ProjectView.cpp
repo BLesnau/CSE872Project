@@ -338,7 +338,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      clone(m_image, m_image2, m_selections, m_selections2);
+      clone2(m_image, m_image2, m_selections, m_selections2);
 
       /*
       CRect outRect;
