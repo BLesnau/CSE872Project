@@ -63,5 +63,8 @@ packages/
 #Test files
 *.testsettings
 
+#Beyond compare files
+*.orig
+
 !Project/openbr/*
 !Project/openbr/lib/*

@@ -5,7 +5,10 @@
 #pragma once
 #include <atlimage.h>
 #include <vector>
+#include "Selection.h"
 #include "br_interface.h"
+
+class CSelection;
 
 class CProjectView : public CView
 {
@@ -15,8 +18,6 @@ protected: // create from serialization only
 
    // Attributes
 public:
-   enum DragState { IDLE, DRAGGING, FIXED };
-
    CProjectDoc* GetDocument() const;
    CImage m_image;
    CImage m_origImage;
@@ -24,10 +25,10 @@ public:
    CImage m_image2;
    CImage m_origImage2;
    BOOL m_bValidImage2;
-   CRect m_dragSelection;
-   DragState m_dragState;
-   std::vector<CRect> m_selections;
-   std::vector<CRect> m_selections2;
+   CSelection* m_dragSelection;
+   CSelection::DragState m_dragState;
+   std::vector<CSelection*> m_selections;
+   std::vector<CSelection*> m_selections2;
    std::vector<COLORREF> m_colors;
 
    brInterface detection;
