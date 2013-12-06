@@ -21,8 +21,8 @@ CRectSelection::~CRectSelection()
 
 BOOL CRectSelection::IsPointInSelection( int x, int y )
 {
-   if( x >= m_rect.left && x <= m_rect.right &&
-         y >= m_rect.top && y<=m_rect.bottom )
+   if( x >= m_rect.left && x < m_rect.right &&
+         y >= m_rect.top && y<m_rect.bottom )
    {
       return TRUE;
    }

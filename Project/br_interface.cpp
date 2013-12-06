@@ -317,7 +317,24 @@ void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, s
          auto srcBox = srcRegions[patchIdx]->GetBoundingBox();
          auto dstBox = dstRegions[patchIdx]->GetBoundingBox();
 
-         int nPixels = srcBox.Width() * srcBox.Height();
+         std::ostringstream maskout;
+         // We explicitly index the selected pixels
+         int nPixels = 0;
+         cv::Mat pixelIndices(srcBox.Height() + 2, srcBox.Width() + 2, CV_32SC1);
+         CPoint maskOrigin = srcRegions[patchIdx]->GetBasePoint() - CPoint(1,1);
+         for (int i=0; i < pixelIndices.rows; i++)
+         {
+             for (int j=0; j < pixelIndices.cols; j++)
+             {
+                 if (srcRegions[patchIdx]->IsPointInSelection(j + maskOrigin.x, i + maskOrigin.y))
+                     pixelIndices.at<int>(i,j) = nPixels++;
+                 else
+                     pixelIndices.at<int>(i,j) = -1;
+                 maskout << pixelIndices.at<int>(i,j) << '\t';
+             }
+             maskout << std::endl;
+         }
+         //OutputDebugStringA(maskout.str().c_str());
 
          // Construct a problem of  the form Ax = b
          // Here, A is nPixels x nPixels and encodes the laplacian
@@ -333,14 +350,17 @@ void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, s
          Eigen::VectorXd b(nPixels);
          Eigen::VectorXd x(nPixels);
 
-         CPoint dstOrigin = dstBox.TopLeft();
-         CPoint srcOrigin = srcBox.TopLeft();
+         CPoint dstOrigin = dstBox.TopLeft() - CPoint(1,1);
+         CPoint srcOrigin = srcBox.TopLeft() - CPoint(1,1);
 
-         for (int i=0; i < srcBox.Height(); i++)
+         for (int i=1; i < srcBox.Height()+1; i++)
          {
-            for (int j=0; j < srcBox.Width();j++)
+            for (int j=1; j < srcBox.Width()+1;j++)
             {
-               int idx = j + i * srcBox.Width();
+                int idx = pixelIndices.at<int>(i,j);
+                // We skip non-selected pixels
+                if (idx == -1)
+                    continue;
 
                // b values are the laplacian of the src image (adjusted at boundaries)
                b(idx) = laplacian.at<double>(i + srcOrigin.y, j + srcOrigin.x);
@@ -349,26 +369,30 @@ void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, s
                A.insert(idx,idx) = -4.0;
 
                // i + 1
-               if ((i + 1) < srcBox.Height())
-                  A.insert(idx, j + (i+1) * srcBox.Width()) = 1;
+               int adjacentIdx = pixelIndices.at<int>(i+1,j);
+               if (adjacentIdx != -1)
+                  A.insert(idx, adjacentIdx) = 1;
                else
                   b(idx) -= dstIm.at<unsigned char>(i + 1 + dstOrigin.y, j + dstOrigin.x);
 
                // i - 1
-               if ((i-1) >= 0)
-                  A.insert(idx, j + (i-1) * srcBox.Width()) = 1;
+               adjacentIdx = pixelIndices.at<int>(i-1,j);
+               if (adjacentIdx != -1)
+                  A.insert(idx, adjacentIdx) = 1;
                else
                   b(idx) -= dstIm.at<unsigned char>(i - 1 + dstOrigin.y, j + dstOrigin.x);
 
                // j + 1
-               if ((j + 1) < srcBox.Width())
-                  A.insert(idx, j + 1 + i * srcBox.Width()) = 1;
+               adjacentIdx = pixelIndices.at<int>(i,j+1);
+               if (adjacentIdx != -1)
+                  A.insert(idx, adjacentIdx) = 1;
                else
                   b(idx) -= dstIm.at<unsigned char> (i + dstOrigin.y, j + 1 + dstOrigin.x);
 
                // j - 1
-               if (j - 1 >= 0)
-                  A.insert(idx, j - 1 + i * srcBox.Width()) = 1;
+               adjacentIdx = pixelIndices.at<int>(i,j-1);
+               if (adjacentIdx != -1)
+                  A.insert(idx, adjacentIdx) = 1;
                else
                   b(idx) -= dstIm.at<unsigned char>(i + dstOrigin.y, j - 1 + dstOrigin.x);
 
@@ -399,11 +423,14 @@ void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, s
 
 
          // Copy the new values back into dst
-         for (int i=0; i < dstBox.Height(); i++)
+         for (int i=0; i < dstBox.Height()+2; i++)
          {
-            for (int j=0; j < dstBox.Width(); j++)
+            for (int j=0; j < dstBox.Width()+2; j++)
             {
-               int idx = j + i * dstBox.Width();
+                int idx = pixelIndices.at<int>(i,j);
+                // we don't update non-selected pixels
+                if (idx == -1)
+                    continue;
 
                COLORREF current = dst.GetPixel(j + dstOrigin.x, i + dstOrigin.y);
                int bgr[3];

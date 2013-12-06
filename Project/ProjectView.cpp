@@ -78,7 +78,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
    {
       // TODO: Modify the Window class or styles here by modifying
       //  the CREATESTRUCT cs
-
+       this->m_dragSelection = NULL;
       return CView::PreCreateWindow(cs);
    }
 
