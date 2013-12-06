@@ -253,7 +253,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      //detection.pointCorrespondence(m_image, m_image2, m_selections, m_selections2);
+      detection.pointCorrespondence(m_image, m_image2, m_selections, m_selections2);
 
       std::ostringstream postCallOut;
       postCallOut << "received " << m_selections.size() << " vs. " << m_selections2.size() << " output" << std::endl;
@@ -300,7 +300,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      //clone2(m_image, m_image2, m_selections, m_selections2);
+      clone2(m_image, m_image2, m_selections, m_selections2);
 
       /*
       CRect outRect;

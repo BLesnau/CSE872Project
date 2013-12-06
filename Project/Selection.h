@@ -17,6 +17,7 @@ public:
    virtual CPoint GetBasePoint() = 0;
    virtual void Normalize() = 0;
    virtual CSelection* Copy() = 0;
+   virtual CRect GetBoundingBox() = 0;
    virtual void OnLButtonDown( DragState dragState, CPoint point ) = 0;
    virtual void OnLButtonUp( DragState dragState, CPoint point, CImage* pImage, std::vector<CSelection*>& selections ) = 0;
    virtual void OnMouseMove( DragState dragState, CPoint point, CImage* pImage, CImage* pImage2 ) = 0;

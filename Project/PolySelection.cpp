@@ -49,3 +49,8 @@ CSelection* CPolySelection::Copy()
 {
    return NULL;
 }
+
+CRect CPolySelection::GetBoundingBox()
+{
+   return CRect();
+}

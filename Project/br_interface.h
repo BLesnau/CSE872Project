@@ -3,6 +3,8 @@
 #include <atlimage.h>
 #include <vector>
 
+class CSelection;
+
 namespace br
 {
     class Transform;
@@ -18,15 +20,12 @@ public:
     static void destruct();
 
     //br::Transform * keyPointDetector;
-
-    
-    void pointCorrespondence(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
+   
+    void pointCorrespondence(CImage & src, CImage & dst, std::vector<CSelection*>  & srcRegions, std::vector<CSelection*> & dstRegions);
 
 //    void clone(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
 
 };
 
-void clone(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
-void clone2(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
-
-
+void clone(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, std::vector<CSelection*> & dstRegions);
+void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, std::vector<CSelection*> & dstRegions);

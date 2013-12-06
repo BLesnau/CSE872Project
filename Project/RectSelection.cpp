@@ -10,6 +10,11 @@ CRectSelection::CRectSelection( int l, int t, int r, int b )
    m_rect.bottom = b;
 }
 
+CRectSelection::CRectSelection( CRect rect )
+{
+   m_rect = rect;
+}
+
 CRectSelection::~CRectSelection()
 {
 }
@@ -136,4 +141,9 @@ void CRectSelection::Normalize()
 CSelection* CRectSelection::Copy()
 {
    return new CRectSelection( m_rect.left, m_rect.top, m_rect.right, m_rect.bottom );
+}
+
+CRect CRectSelection::GetBoundingBox()
+{
+   return m_rect;
 }
