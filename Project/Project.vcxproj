@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)openbr\include;$(ProjectDir)qt\include\QtCore;$(ProjecctDir)qt\include\;$(ProjectDir)\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)openbr\include;$(ProjectDir)qt\include\QtCore;$(ProjecctDir)qt\include\;$(ProjectDir)\opencv\include;$(ProjectDir)\eigen-eigen-5097c01bcdc4\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

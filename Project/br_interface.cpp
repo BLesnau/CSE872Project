@@ -174,8 +174,6 @@ void templateFromCImage(CImage & input, br::Template & output)
     output.file.name = nameStream.str().c_str();
 }
 
-static QSharedPointer<br::Transform> keyPointDetector;
-
 void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CRect>  & srcRegions, std::vector<CRect> & dstRegions)
 {
     if (keyPointDetector == NULL)

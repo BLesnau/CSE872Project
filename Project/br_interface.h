@@ -2,6 +2,7 @@
 
 #include <atlimage.h>
 #include <vector>
+#include "qsharedpointer.h"
 
 namespace br
 {
@@ -17,7 +18,7 @@ public:
 
     static void destruct();
 
-    br::Transform * keyPointDetector;
+    QSharedPointer<br::Transform> keyPointDetector;
 
     
     void pointCorrespondence(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
