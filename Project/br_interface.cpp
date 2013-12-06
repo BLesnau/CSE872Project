@@ -20,19 +20,27 @@
 using namespace br;
 
 //        Globals->abbreviations.insert("RectFromStasmEyes","RectFromPoints([],0.15,5.3)");
-//        Globals->abbreviations.insert("RectFromStasmBrow","RectFromPoints([16,17,18,19,20,21,22,23,24,25,26,27],0.15,5)");
+//        Globals->abbreviations.insert("RectFromStasmBrow","RectFromPoints(,0.15,5)");
 //        Globals->abbreviations.insert("RectFromStasmNose","RectFromPoints([],0.15,1.15)");
 //        Globals->abbreviations.insert("RectFromStasmMouth","RectFromPoints([],0.3,2)");
 //        Globals->abbreviations.insert("RectFromStasmHair", "RectFromPoints([13,14,15],1.75,1.5)");
 
+// eyebrow points:
+// left
+// [16,17,18,19,20,21,
+// right
+// 22,23,24,25,26,27]
 
-static int leyeIdx[] = {30, 31, 32, 33, 34, 35, 36, 37, 38};
-static int reyeIdx[] = {39, 40, 41, 42, 43, 44, 45, 46, 47};
-static int noseIdx[] = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58};
-static int mouthIdx[] ={59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76};
+// The first point is the center of the object, the remaining points form a convex hull around the region
+static int leyeIdx[] = {38, 34,35,36,37,30,21,16,17,18};
+static int reyeIdx[] = {39, 40,42,46,45,44,25,24,23,22};
+//static int noseIdx[] = {52, 21,58,57,56,55,54,22};
+static int noseIdx[] = {52, 30,58,57,56,55,54,40};
+static int mouthIdx[] ={67, 59,76,75,74,73,72,65,64,63,62,61,60};
 
 static int * metaIndex[] = {leyeIdx, reyeIdx, noseIdx, mouthIdx};
-static int indexSizes[] = {9, 9, 11, 18};
+//static int indexSizes[] = {9, 9, 11, 18};
+static int indexSizes[] = {10, 10, 8, 13};
 
 void boundingSquare(CRect & boundingBox)
 {
@@ -68,14 +76,15 @@ void boundingSquare(CRect & boundingBox)
 
 }
 
-void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength, CRect & bbox, int width, int height)
+void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength, CRect & bbox, int width, int height, bool reCenter = true)
 {
     bbox.left = width - 1;
     bbox.right = 0;
     bbox.bottom = height - 1;
     bbox.top = 0;
     int offset = 2;
-    for (int i=0;i < indexLength; i++)
+    QPointF center = points[index[0] + offset];
+    for (int i=1;i < indexLength; i++)
     {
         int idx = index[i] + offset;
         int pts_size = points.size();
@@ -86,8 +95,11 @@ void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength,
             exOut << "idx " << idx << " vs. points size " << pts_size;
             throw exOut.str();
         }
-        int xVal = points[idx].x();
-        int yVal = points[idx].y();
+
+        // distance from the center to the point
+        QPointF currentPoint = points[idx];
+        int xVal = currentPoint.x();
+        int yVal = currentPoint.y();
 
          if (xVal < bbox.left)
              bbox.left = xVal;
@@ -101,9 +113,28 @@ void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength,
 
     std::ostringstream bOut;
     bOut << "bbox dimensions: " << bbox.left << ',' << bbox.bottom << ',' << bbox.right << "," << bbox.top << std::endl;;
-
     ::OutputDebugStringA(bOut.str().c_str());
-    boundingSquare(bbox);
+
+    if (reCenter)
+    {
+        int high_diff = abs(bbox.top - center.y());
+        int low_diff = abs(bbox.bottom - center.y() );
+        if (high_diff > low_diff)
+            bbox.bottom = center.y() - high_diff;
+        else
+            bbox.top = center.y() + low_diff;
+
+        //*
+        int height = abs(bbox.Height());
+        double height_delta = height * .125 ;
+        height *=  1.25;
+        bbox.bottom -= height_delta;
+        bbox.top = bbox.bottom + height;
+        //*/
+
+    }
+
+    //boundingSquare(bbox);
 
     std::ostringstream b2;
     b2 << "Squared bbox dimensions: " << bbox.left << ',' << bbox.bottom << ',' << bbox.right << "," << bbox.top << std::endl << std::endl;
@@ -143,10 +174,15 @@ void templateFromCImage(CImage & input, br::Template & output)
     output.file.name = nameStream.str().c_str();
 }
 
+static QSharedPointer<br::Transform> keyPointDetector;
+
 void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CRect>  & srcRegions, std::vector<CRect> & dstRegions)
 {
     if (keyPointDetector == NULL)
-        this->keyPointDetector = Transform::make("SaveMat(orig)+Cvt(Gray)+Cascade(FrontalFace)+ASEFEyes+Stasm(pinEyes=[First_Eye, Second_Eye])+RestoreMat(orig)+Draw(inPlace=true)", NULL);
+        keyPointDetector = Transform::fromAlgorithm("SaveMat(orig)+Cvt(Gray)+Cascade(FrontalFace)+ASEFEyes+RestoreMat(orig)+Affine(300,300,.395,.54, method=Bilin)+SaveMat(warped)+Cvt(Gray)+Stasm+RestoreMat(warped)");
+        
+        //this->keyPointDetector = Transform::make("SaveMat(orig)+Cvt(Gray)+Cascade(FrontalFace)+ASEFEyes+RestoreMat(orig)+Affine(300,300,.395,.54, method=Bilin)+SaveMat(warped)+Cvt(Gray)+Stasm+RestoreMat(warped)", NULL);
+        //this->keyPointDetector = Transform::make("SaveMat(orig)+Cvt(Gray)+Cascade(FrontalFace)+ASEFEyes+Stasm(pinEyes=[First_Eye, Second_Eye])+RestoreMat(orig)+Draw(inPlace=true)", NULL);
     srcRegions.clear();
     dstRegions.clear();
 
@@ -177,8 +213,29 @@ void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CR
     QList<QPointF> srcPoints = tList[0].file.points();
     QList<QPointF> dstPoints = tList[1].file.points();
 
+    cv::Mat srcMat = tList[0].m();
+    cv::Mat dstMat = tList[1].m();
+
+    src.Detach();
+    dst.Detach();
+    src.Create(srcMat.cols, srcMat.rows, 24);
+    dst.Create(dstMat.cols, dstMat.rows, 24);
+
+    for (int i=0; i < srcMat.rows;i++)
+    {
+        for (int j=0; j < dstMat.cols;j++)
+        {
+            COLORREF srcColor = RGB(srcMat.at<cv::Vec3b>(i,j)[2], srcMat.at<cv::Vec3b>(i,j)[1], srcMat.at<cv::Vec3b>(i,j)[0]);
+            COLORREF dstColor = RGB(dstMat.at<cv::Vec3b>(i,j)[2], dstMat.at<cv::Vec3b>(i,j)[1], dstMat.at<cv::Vec3b>(i,j)[0]);
+            src.SetPixel(j,i, srcColor);
+            dst.SetPixel(j,i, dstColor);
+
+        }
+    }
+
     for (int i=0; i < 4; i++)
     {
+        bool reCenter = i != 2;
         // skipping the nose
         if (i==2)
             continue;
@@ -186,25 +243,40 @@ void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CR
         CRect srcBox;
         CRect dstBox;
 
-        componentBoundingBox(srcPoints, metaIndex[i], indexSizes[i],srcBox, src.GetWidth(), src.GetHeight());
-        componentBoundingBox(dstPoints, metaIndex[i], indexSizes[i],dstBox, dst.GetWidth(), dst.GetHeight());
+        componentBoundingBox(srcPoints, metaIndex[i], indexSizes[i],srcBox, src.GetWidth(), src.GetHeight(), reCenter);
+        componentBoundingBox(dstPoints, metaIndex[i], indexSizes[i],dstBox, dst.GetWidth(), dst.GetHeight()), reCenter;
 
+        dstBox.NormalizeRect();
+        srcBox.NormalizeRect();
 
         CPoint dstCenter = dstBox.CenterPoint();
         CPoint srcCenter = srcBox.CenterPoint();
 
-        dstBox = srcBox - srcCenter;
-        dstBox = dstBox + dstCenter;
+        CRect srcNorm = srcBox - srcCenter;
+        CRect dstNorm = dstBox - dstCenter;
+
+        int final_width = srcNorm.Width()  > dstNorm.Width()  ? srcNorm.Width() : dstNorm.Width();
+        int final_height= srcNorm.Height() > dstNorm.Height() ? srcNorm.Height(): dstNorm.Height();
+
+        CRect finalNorm;
+        finalNorm.left = -final_width / 2;
+        finalNorm.right = finalNorm.left + final_width;
+        finalNorm.top = -final_height / 2;
+        finalNorm.bottom = finalNorm.top + final_height;
+
+        dstBox = finalNorm + dstCenter;
+        srcBox = finalNorm + srcCenter; 
 
         dstBox.NormalizeRect();
+        srcBox.NormalizeRect();
+
+
         std::ostringstream bOut;
         bOut << "\toutput bbox dimensions " << dstBox.left << ',' << dstBox.bottom << ',' << dstBox.right << "," << dstBox.top << std::endl;
 
         ::OutputDebugStringA(bOut.str().c_str());
 
         dstRegions.push_back(dstBox);
-        // We use the size of the bounding box in the source image, and just align its center with the center of the bounding box in the destination image
-        srcBox.NormalizeRect();
         srcRegions.push_back(srcBox);
 
     }
@@ -237,27 +309,7 @@ void clone2(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::ve
         cv::Mat laplacian;
         cv::Mat dstIm = dstChannels[channel];
         cv::Mat srcIm = srcChannels[channel];
-
-        laplacian.create(srcIm.rows, srcIm.cols, CV_64FC1);
-
-        for(int i=1; i < srcIm.rows-1; i++)
-        {
-            for (int j=1; j < srcIm.cols-1;j++)
-            {
-                // Discrete laplacian:
-                // 0  1  0
-                // 1 -4  1
-                // 0  1  0
-                double value = -4.0 * double(srcIm.at<unsigned char>(i,j));
-                value += double(srcIm.at<unsigned char>(i+1,j));
-                value += double(srcIm.at<unsigned char>(i-1,j));
-                value += double(srcIm.at<unsigned char>(i,j+1));
-                value += double(srcIm.at<unsigned char>(i,j-1));
-                laplacian.at<double>(i,j) = value;
-            }
-        }
-
-        //cv::Laplacian(srcChannels[channel], laplacian, CV_64F);
+        cv::Laplacian(srcChannels[channel], laplacian, CV_64F);
 
         for (int patchIdx=0; patchIdx < srcRegions.size(); patchIdx++)
         {
@@ -268,7 +320,10 @@ void clone2(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::ve
             // x is an nPixels long vector of unknowns (the new values of the dst image that
             // we will solve for), and b is the target values (laplacian of the src image, adjusted
             // at the boundaries). We encode the pixels in row-major order
-            
+
+            // 0  1  0
+            // 1 -4  1
+            // 0  1  0
             // A is a sparse matrix (discrete laplacian only touches self, and 4 adjacent pixels)
             Eigen::SparseMatrix<double> A(nPixels, nPixels);
             Eigen::VectorXd b(nPixels);
@@ -293,26 +348,25 @@ void clone2(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::ve
                     if ((i + 1) < srcRegions[patchIdx].Height())
                         A.insert(idx, j + (i+1) * srcRegions[patchIdx].Width()) = 1;
                     else
-                        b(idx) = b(idx) - dstIm.at<unsigned char>(i + 1 + dstOrigin.y, j + dstOrigin.x);
+                        b(idx) -= dstIm.at<unsigned char>(i + 1 + dstOrigin.y, j + dstOrigin.x);
 
                     // i - 1
                     if ((i-1) >= 0)
                         A.insert(idx, j + (i-1) * srcRegions[patchIdx].Width()) = 1;
                     else
-                        b(idx) = b(idx) - dstIm.at<unsigned char>(i -1 + dstOrigin.y, j + dstOrigin.x);
+                        b(idx) -= dstIm.at<unsigned char>(i - 1 + dstOrigin.y, j + dstOrigin.x);
 
                     // j + 1
                     if ((j + 1) < srcRegions[patchIdx].Width())
                         A.insert(idx, j + 1 + i * srcRegions[patchIdx].Width()) = 1;
                     else
-                        b(idx) = b(idx) - dstIm.at<unsigned char>(i + dstOrigin.y, j + 1 + dstOrigin.x);
-
+                        b(idx) -= dstIm.at<unsigned char> (i + dstOrigin.y, j + 1 + dstOrigin.x);
                     
                     // j - 1
                     if (j - 1 >= 0)
                         A.insert(idx, j - 1 + i * srcRegions[patchIdx].Width()) = 1;
                     else
-                        b(idx) = b(idx) - dstIm.at<unsigned char>(i + dstOrigin.y, j - 1 + dstOrigin.x);
+                        b(idx) -= dstIm.at<unsigned char>(i + dstOrigin.y, j - 1 + dstOrigin.x);
 
                 }
             }
@@ -352,7 +406,7 @@ void clone2(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::ve
                     bgr[2] = GetRValue(current);
                     bgr[1] = GetGValue(current);
                     bgr[0] = GetBValue(current);
-                    double val = x(idx);
+                    int val = int(x(idx) + 0.5);
                     if (val < 0)
                         val = 0;
                     if (val >= 255)
@@ -463,7 +517,7 @@ brInterface::brInterface()
 {
     brInterface::init();
 
-    keyPointDetector = NULL;
+    //keyPointDetector = NULL;
 }
 
 static int argc=3;
