@@ -17,7 +17,7 @@ public:
 
     static void destruct();
 
-    br::Transform * keyPointDetector;
+    //br::Transform * keyPointDetector;
 
     
     void pointCorrespondence(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
