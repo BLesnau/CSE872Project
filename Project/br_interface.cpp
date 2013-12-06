@@ -303,7 +303,7 @@ void clone2(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::ve
     cv::split(srcIm, srcChannels);
     cv::split(dstIm, dstChannels);
 
-    for (int channel=0; channel < srcChannels.size(); channel++)
+    for (int channel=0; channel < (int)srcChannels.size(); channel++)
     {
         // Compute the laplacian of the source image
         cv::Mat laplacian;
@@ -311,7 +311,7 @@ void clone2(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::ve
         cv::Mat srcIm = srcChannels[channel];
         cv::Laplacian(srcChannels[channel], laplacian, CV_64F);
 
-        for (int patchIdx=0; patchIdx < srcRegions.size(); patchIdx++)
+        for (int patchIdx=0; patchIdx < (int)srcRegions.size(); patchIdx++)
         {
             int nPixels = srcRegions[patchIdx].Width() * srcRegions[patchIdx].Height();
 
@@ -436,7 +436,7 @@ void clone(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vec
     cv::split(srcIm, srcChannels);
     cv::split(dstIm, dstChannels);
 
-    for (int channel=0; channel < srcChannels.size(); channel++)
+    for (int channel=0; channel < (int)srcChannels.size(); channel++)
     {
         // Compute the laplacian of the source image
         cv::Mat laplacian;
@@ -464,7 +464,7 @@ void clone(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vec
 
         //cv::Laplacian(srcChannels[channel], laplacian, CV_32F);
 
-        for (int patchIdx=0; patchIdx < srcRegions.size(); patchIdx++)
+        for (int patchIdx=0; patchIdx < (int)srcRegions.size(); patchIdx++)
         {
             int nPixels = srcRegions[patchIdx].Width() * srcRegions[patchIdx].Height();
 

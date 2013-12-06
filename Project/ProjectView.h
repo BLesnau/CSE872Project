@@ -6,7 +6,7 @@
 #include <atlimage.h>
 #include <vector>
 #include "Selection.h"
-#include "Selection.h"
+#include "br_interface.h"
 
 class CSelection;
 

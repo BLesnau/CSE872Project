@@ -108,9 +108,9 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          for( int i=0; i<(int)m_selections.size(); i++ )
          {
             auto selection = m_selections.at( i );
-            std::ostringstream boxOut; 
+            /*std::ostringstream boxOut; 
             boxOut << "Total: " << m_selections.size() << " Drawing: " << i << "\t" << selection.left << " " << selection.right << " " << selection.bottom << " " << selection.top << std::endl;
-            OutputDebugStringA(boxOut.str().c_str());
+            OutputDebugStringA(boxOut.str().c_str());*/
 
          	selection->OnDraw( &drawnImage, m_colors.at( i % m_colors.size() ) );
          }
@@ -253,7 +253,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      detection.pointCorrespondence(m_image, m_image2, m_selections, m_selections2);
+      //detection.pointCorrespondence(m_image, m_image2, m_selections, m_selections2);
 
       std::ostringstream postCallOut;
       postCallOut << "received " << m_selections.size() << " vs. " << m_selections2.size() << " output" << std::endl;
@@ -300,7 +300,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      clone2(m_image, m_image2, m_selections, m_selections2);
+      //clone2(m_image, m_image2, m_selections, m_selections2);
 
       /*
       CRect outRect;
