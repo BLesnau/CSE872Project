@@ -27,6 +27,7 @@ public:
    BOOL m_bValidImage2;
    CSelection* m_dragSelection;
    CSelection::DragState m_dragState;
+   CSelection::Mode m_selectMode;
    std::vector<CSelection*> m_selections;
    std::vector<CSelection*> m_selections2;
    std::vector<COLORREF> m_colors;
@@ -73,6 +74,10 @@ public:
    afx_msg void OnLButtonDown( UINT nFlags, CPoint point );
    afx_msg void OnLButtonUp( UINT nFlags, CPoint point );
    afx_msg void OnImageOpendestination();
+   afx_msg void OnModeRectangle();
+   afx_msg void OnModePolygon();
+   afx_msg void OnUpdateModeRectangle(CCmdUI *pCmdUI);
+   afx_msg void OnUpdateModePolygon(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in ProjectView.cpp

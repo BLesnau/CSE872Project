@@ -4,7 +4,7 @@
 class CPolySelection : public CSelection
 {
 public:
-   CPolySelection();
+   CPolySelection( int x, int y );
    ~CPolySelection();
 
    virtual BOOL IsPointInSelection( int x, int y );
@@ -16,4 +16,8 @@ public:
    virtual void OnLButtonUp( DragState dragState, CPoint point, CImage* pImage, std::vector<CSelection*>& selections );
    virtual void OnMouseMove( DragState dragState, CPoint point, CImage* pImage, CImage* pImage2);
    virtual void OnDraw( CImage* pImage, COLORREF color );
+
+  std::vector<CPoint> m_verts;
+  CPoint m_nextPoint;
+  BOOL m_bIsFinished;
 };

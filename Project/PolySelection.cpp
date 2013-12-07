@@ -1,8 +1,11 @@
 #include "StdAfx.h"
 #include "PolySelection.h"
 
-CPolySelection::CPolySelection()
+CPolySelection::CPolySelection( int x, int y )
 {
+   m_nextPoint = CPoint( x, y );
+   m_verts.push_back( m_nextPoint );
+   m_bIsFinished = FALSE;
 }
 
 CPolySelection::~CPolySelection()
@@ -22,7 +25,7 @@ CPoint CPolySelection::GetBasePoint()
 
 void CPolySelection::OnLButtonDown( DragState dragState, CPoint point )
 {
-   
+
 }
 
 void CPolySelection::OnLButtonUp( DragState dragState, CPoint point, CImage* pImage, std::vector<CSelection*>& selections )
@@ -47,7 +50,7 @@ void CPolySelection::Normalize()
 
 CSelection* CPolySelection::Copy()
 {
-   return NULL;
+   return this;
 }
 
 CRect CPolySelection::GetBoundingBox()

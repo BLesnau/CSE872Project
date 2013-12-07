@@ -10,6 +10,7 @@ protected:
 
 public:
    enum DragState { IDLE, DRAGGING, FIXED };
+   enum Mode { RECT, POLY };
 
    ~CSelection(void);
 
