@@ -17,6 +17,7 @@
 #include <sstream>
 #include "Selection.h"
 #include "RectSelection.h"
+#include "PolySelection.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,7 +36,12 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       ON_WM_MOUSEMOVE()
       ON_WM_LBUTTONDOWN()
       ON_WM_LBUTTONUP()
+      ON_WM_LBUTTONDBLCLK()
       ON_COMMAND(ID_IMAGE_OPENDESTINATION, &CProjectView::OnImageOpendestination)
+      ON_COMMAND(ID_MODE_RECTANGLE, &CProjectView::OnModeRectangle)
+      ON_COMMAND(ID_MODE_POLYGON, &CProjectView::OnModePolygon)
+      ON_UPDATE_COMMAND_UI(ID_MODE_RECTANGLE, &CProjectView::OnUpdateModeRectangle)
+      ON_UPDATE_COMMAND_UI(ID_MODE_POLYGON, &CProjectView::OnUpdateModePolygon)
    END_MESSAGE_MAP()
 
    // CProjectView construction/destruction
@@ -45,6 +51,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       m_bValidImage = FALSE;
       m_bValidImage2 = FALSE;
       m_dragState = CSelection::IDLE;
+      m_selectMode = CSelection::RECT;
 
       m_colors.push_back( RGB( 255, 0, 0 ) );
       m_colors.push_back( RGB( 0, 255, 0 ) );
@@ -78,7 +85,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
    {
       // TODO: Modify the Window class or styles here by modifying
       //  the CREATESTRUCT cs
-       this->m_dragSelection = NULL;
+      this->m_dragSelection = NULL;
       return CView::PreCreateWindow(cs);
    }
 
@@ -112,7 +119,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
             boxOut << "Total: " << m_selections.size() << " Drawing: " << i << "\t" << selection.left << " " << selection.right << " " << selection.bottom << " " << selection.top << std::endl;
             OutputDebugStringA(boxOut.str().c_str());*/
 
-         	selection->OnDraw( &drawnImage, m_colors.at( i % m_colors.size() ) );
+            selection->OnDraw( &drawnImage, m_colors.at( i % m_colors.size() ) );
          }
 
          for( int i=0; i<(int)m_selections2.size(); i++ )
@@ -253,27 +260,27 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          return;
       }
 
-      detection.pointCorrespondence(m_image, m_image2, m_selections, m_selections2);
+      detection.pointCorrespondence( m_image, m_image2, m_selections, m_selections2, m_selectMode );
 
       std::ostringstream postCallOut;
       postCallOut << "received " << m_selections.size() << " vs. " << m_selections2.size() << " output" << std::endl;
       ::OutputDebugStringA(postCallOut.str().c_str());
 
-/*      auto left = min(m_image.GetWidth()-1, 25);
+      /*      auto left = min(m_image.GetWidth()-1, 25);
       auto top = min(m_image.GetHeight()-1, 25);
 
       if( m_image.GetWidth() - 1 >= left + 50 && m_image.GetHeight() - 1 >= top + 50 )
       {
-         if( m_image2.GetWidth() - 1 >= 50 && m_image.GetHeight() >= 50 )
-         {
-            auto rect = CRect( left, top, left + 50, top + 50 );
-            m_selections.push_back( rect );
+      if( m_image2.GetWidth() - 1 >= 50 && m_image.GetHeight() >= 50 )
+      {
+      auto rect = CRect( left, top, left + 50, top + 50 );
+      m_selections.push_back( rect );
 
-            auto rect2 = CRect( 0, 0, 50, 50 );
-            m_selections2.push_back( rect2 );
-         }
+      auto rect2 = CRect( 0, 0, 50, 50 );
+      m_selections2.push_back( rect2 );
+      }
       }*/
-      
+
       Invalidate();
    }
 
@@ -306,17 +313,17 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       CRect outRect;
       for( int i=0; i<m_selections.size(); i++ )
       {
-         auto srcSel = m_selections.at(i);
-         auto dstSel = m_selections2.at(i);
+      auto srcSel = m_selections.at(i);
+      auto dstSel = m_selections2.at(i);
 
-         for( int w=0; w<=srcSel.Width(); w++ )
-         {
-            for( int h=0; h<=srcSel.Height(); h++ )
-            {
-               auto clr = m_image.GetPixel( srcSel.left + w, srcSel.top + h );
-               m_image2.SetPixel( dstSel.left + w, dstSel.top + h, clr );
-            }
-         }
+      for( int w=0; w<=srcSel.Width(); w++ )
+      {
+      for( int h=0; h<=srcSel.Height(); h++ )
+      {
+      auto clr = m_image.GetPixel( srcSel.left + w, srcSel.top + h );
+      m_image2.SetPixel( dstSel.left + w, dstSel.top + h, clr );
+      }
+      }
       }
       //*/
 
@@ -355,8 +362,24 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          }
 
          m_dragState = CSelection::DRAGGING;
-         m_dragSelection = new CRectSelection( max( point.x, 1 ), max( point.y, 1 ),
-                                               max( point.x, 1 ), max( point.y, 1 ) );
+
+         if( m_selectMode == CSelection::RECT )
+         {
+            m_dragSelection = new CRectSelection( max( point.x, 1 ), max( point.y, 1 ),
+               max( point.x, 1 ), max( point.y, 1 ) );
+         }
+
+         if( m_selectMode == CSelection::POLY )
+         {
+            m_dragSelection = new CPolySelection( max( point.x, 1 ), max( point.y, 1 ) );
+         }
+      }
+      else
+      {
+         if( m_selectMode == CSelection::POLY )
+         {
+            m_dragSelection->OnLButtonDown( m_dragState, point, &m_image, &m_image2 );
+         }
       }
 
       Invalidate();
@@ -378,19 +401,85 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       {     
          m_dragSelection->OnLButtonUp( m_dragState, point, &m_image, m_selections );
 
+         if( m_selectMode == CSelection::RECT )
+         {
+            m_dragSelection = m_dragSelection->Copy();
+            m_dragSelection->Normalize();
+            m_dragState = CSelection::FIXED;
+         }
+      }
+      else if( m_dragState == CSelection::FIXED )
+      {
+         auto bShouldPlace = m_dragSelection->OnLButtonUp( m_dragState, point, &m_image2, m_selections2 );
+
+         if( m_selectMode == CSelection::RECT )
+         {
+            m_dragSelection = NULL;
+            m_dragState = CSelection::IDLE;
+         }
+
+         if( m_selectMode == CSelection::POLY && bShouldPlace )
+         {
+            m_dragSelection = NULL;
+            m_dragState = CSelection::IDLE;
+         }
+      }
+
+      Invalidate();
+   }
+
+   void CProjectView::OnLButtonDblClk( UINT nFlags, CPoint point )
+   {
+      if( m_dragSelection->OnLButtonDblClk( m_dragState, point, m_dragState == CSelection::DRAGGING ? m_selections : m_selections2 ) )
+      {
          m_dragSelection = m_dragSelection->Copy();
          m_dragSelection->Normalize();
          m_dragState = CSelection::FIXED;
       }
-      else if( m_dragState == CSelection::FIXED )
-      {
-         m_dragSelection->OnLButtonUp( m_dragState, point, &m_image2, m_selections2 );
+   }
 
-         m_dragSelection = NULL;
+   void CProjectView::OnModeRectangle()
+   {
+      m_selectMode = CSelection::RECT;
+
+      if( m_dragState != CSelection::IDLE )
+      {
          m_dragState = CSelection::IDLE;
+
+         if( m_selections.size() > m_selections2.size() )
+         {
+            m_selections.pop_back();
+         }
       }
 
       Invalidate();
+   }
+
+   void CProjectView::OnModePolygon()
+   {
+      m_selectMode = CSelection::POLY;
+
+      if( m_dragState != CSelection::IDLE )
+      {
+         m_dragState = CSelection::IDLE;
+
+         if( m_selections.size() > m_selections2.size() )
+         {
+            m_selections.pop_back();
+         }
+      }
+
+      Invalidate();
+   }
+
+   void CProjectView::OnUpdateModeRectangle(CCmdUI *pCmdUI)
+   {
+      pCmdUI->SetCheck( m_selectMode == CSelection::RECT );
+   }
+
+   void CProjectView::OnUpdateModePolygon(CCmdUI *pCmdUI)
+   {
+      pCmdUI->SetCheck( m_selectMode == CSelection::POLY );
    }
 
    // CProjectView diagnostics

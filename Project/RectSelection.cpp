@@ -35,12 +35,17 @@ CPoint CRectSelection::GetBasePoint()
    return CPoint( m_rect.left, m_rect.top );
 }
 
-void CRectSelection::OnLButtonDown( DragState dragState, CPoint point )
+void CRectSelection::OnLButtonDown( DragState dragState, CPoint point, CImage* pImage, CImage* pImage2  )
 {
    
 }
 
-void CRectSelection::OnLButtonUp( DragState dragState, CPoint point, CImage* pImage, std::vector<CSelection*>& selections )
+BOOL CRectSelection::OnLButtonDblClk( DragState dragState, CPoint point, std::vector<CSelection*>& selections )
+{
+   return FALSE;
+}
+
+BOOL CRectSelection::OnLButtonUp( DragState dragState, CPoint point, CImage* pImage, std::vector<CSelection*>& selections )
 {
    if( dragState == DRAGGING )
    {     
@@ -59,6 +64,8 @@ void CRectSelection::OnLButtonUp( DragState dragState, CPoint point, CImage* pIm
          selections.push_back( this );
       }
    }
+
+   return TRUE;
 }
 
 void CRectSelection::OnMouseMove( DragState dragState, CPoint point, CImage* pImage, CImage* pImage2 )

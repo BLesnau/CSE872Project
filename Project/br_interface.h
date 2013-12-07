@@ -2,8 +2,7 @@
 
 #include <atlimage.h>
 #include <vector>
-
-class CSelection;
+#include "Selection.h"
 
 namespace br
 {
@@ -21,7 +20,7 @@ public:
 
     //br::Transform * keyPointDetector;
    
-    void pointCorrespondence(CImage & src, CImage & dst, std::vector<CSelection*>  & srcRegions, std::vector<CSelection*> & dstRegions);
+    void pointCorrespondence( CImage & src, CImage & dst, std::vector<CSelection*>  & srcRegions, std::vector<CSelection*> & dstRegions, CSelection::Mode selectMode );
 
 //    void clone(CImage & src, CImage & dst, std::vector<CRect> & srcRegions, std::vector<CRect> & dstRegions);
 

@@ -177,7 +177,7 @@ void templateFromCImage(CImage & input, br::Template & output)
 
 static QSharedPointer<br::Transform> keyPointDetector;
 
-void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CSelection*>  & srcRegions, std::vector<CSelection*> & dstRegions)
+void brInterface::pointCorrespondence( CImage & src, CImage & dst, std::vector<CSelection*>  & srcRegions, std::vector<CSelection*> & dstRegions, CSelection::Mode selectMode )
 {
    if (keyPointDetector == NULL)
       keyPointDetector = Transform::fromAlgorithm("SaveMat(orig)+Cvt(Gray)+Cascade(FrontalFace)+ASEFEyes+RestoreMat(orig)+Affine(300,300,.395,.54, method=Bilin)+SaveMat(warped)+Cvt(Gray)+Stasm+RestoreMat(warped)");
@@ -241,45 +241,47 @@ void brInterface::pointCorrespondence(CImage & src, CImage & dst, std::vector<CS
       if (i==2)
          continue;
 
-      CRect srcBox;
-      CRect dstBox;
+      if( selectMode == CSelection::RECT )
+      {
+         CRect srcBox;
+         CRect dstBox;
 
-      componentBoundingBox(srcPoints, metaIndex[i], indexSizes[i],srcBox, src.GetWidth(), src.GetHeight(), reCenter);
-      componentBoundingBox(dstPoints, metaIndex[i], indexSizes[i],dstBox, dst.GetWidth(), dst.GetHeight()), reCenter;
+         componentBoundingBox(srcPoints, metaIndex[i], indexSizes[i],srcBox, src.GetWidth(), src.GetHeight(), reCenter);
+         componentBoundingBox(dstPoints, metaIndex[i], indexSizes[i],dstBox, dst.GetWidth(), dst.GetHeight()), reCenter;
 
-      dstBox.NormalizeRect();
-      srcBox.NormalizeRect();
+         dstBox.NormalizeRect();
+         srcBox.NormalizeRect();
 
-      CPoint dstCenter = dstBox.CenterPoint();
-      CPoint srcCenter = srcBox.CenterPoint();
+         CPoint dstCenter = dstBox.CenterPoint();
+         CPoint srcCenter = srcBox.CenterPoint();
 
-      CRect srcNorm = srcBox - srcCenter;
-      CRect dstNorm = dstBox - dstCenter;
+         CRect srcNorm = srcBox - srcCenter;
+         CRect dstNorm = dstBox - dstCenter;
 
-      int final_width = srcNorm.Width()  > dstNorm.Width()  ? srcNorm.Width() : dstNorm.Width();
-      int final_height= srcNorm.Height() > dstNorm.Height() ? srcNorm.Height(): dstNorm.Height();
+         int final_width = srcNorm.Width()  > dstNorm.Width()  ? srcNorm.Width() : dstNorm.Width();
+         int final_height= srcNorm.Height() > dstNorm.Height() ? srcNorm.Height(): dstNorm.Height();
 
-      CRect finalNorm;
-      finalNorm.left = -final_width / 2;
-      finalNorm.right = finalNorm.left + final_width;
-      finalNorm.top = -final_height / 2;
-      finalNorm.bottom = finalNorm.top + final_height;
+         CRect finalNorm;
+         finalNorm.left = -final_width / 2;
+         finalNorm.right = finalNorm.left + final_width;
+         finalNorm.top = -final_height / 2;
+         finalNorm.bottom = finalNorm.top + final_height;
 
-      dstBox = finalNorm + dstCenter;
-      srcBox = finalNorm + srcCenter; 
+         dstBox = finalNorm + dstCenter;
+         srcBox = finalNorm + srcCenter; 
 
-      dstBox.NormalizeRect();
-      srcBox.NormalizeRect();
+         dstBox.NormalizeRect();
+         srcBox.NormalizeRect();
 
 
-      std::ostringstream bOut;
-      bOut << "\toutput bbox dimensions " << dstBox.left << ',' << dstBox.bottom << ',' << dstBox.right << "," << dstBox.top << std::endl;
+         std::ostringstream bOut;
+         bOut << "\toutput bbox dimensions " << dstBox.left << ',' << dstBox.bottom << ',' << dstBox.right << "," << dstBox.top << std::endl;
 
-      ::OutputDebugStringA(bOut.str().c_str());
+         ::OutputDebugStringA(bOut.str().c_str());
 
-      dstRegions.push_back( new CRectSelection( dstBox ) );
-      srcRegions.push_back( new CRectSelection( srcBox ) );
-
+         dstRegions.push_back( new CRectSelection( dstBox ) );
+         srcRegions.push_back( new CRectSelection( srcBox ) );
+      }
    }
 
 
@@ -324,15 +326,15 @@ void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, s
          CPoint maskOrigin = srcRegions[patchIdx]->GetBasePoint() - CPoint(1,1);
          for (int i=0; i < pixelIndices.rows; i++)
          {
-             for (int j=0; j < pixelIndices.cols; j++)
-             {
-                 if (srcRegions[patchIdx]->IsPointInSelection(j + maskOrigin.x, i + maskOrigin.y))
-                     pixelIndices.at<int>(i,j) = nPixels++;
-                 else
-                     pixelIndices.at<int>(i,j) = -1;
-                 maskout << pixelIndices.at<int>(i,j) << '\t';
-             }
-             maskout << std::endl;
+            for (int j=0; j < pixelIndices.cols; j++)
+            {
+               if (srcRegions[patchIdx]->IsPointInSelection(j + maskOrigin.x, i + maskOrigin.y))
+                  pixelIndices.at<int>(i,j) = nPixels++;
+               else
+                  pixelIndices.at<int>(i,j) = -1;
+               maskout << pixelIndices.at<int>(i,j) << '\t';
+            }
+            maskout << std::endl;
          }
          //OutputDebugStringA(maskout.str().c_str());
 
@@ -357,10 +359,10 @@ void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, s
          {
             for (int j=1; j < srcBox.Width()+1;j++)
             {
-                int idx = pixelIndices.at<int>(i,j);
-                // We skip non-selected pixels
-                if (idx == -1)
-                    continue;
+               int idx = pixelIndices.at<int>(i,j);
+               // We skip non-selected pixels
+               if (idx == -1)
+                  continue;
 
                // b values are the laplacian of the src image (adjusted at boundaries)
                b(idx) = laplacian.at<double>(i + srcOrigin.y, j + srcOrigin.x);
@@ -427,10 +429,10 @@ void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, s
          {
             for (int j=0; j < dstBox.Width()+2; j++)
             {
-                int idx = pixelIndices.at<int>(i,j);
-                // we don't update non-selected pixels
-                if (idx == -1)
-                    continue;
+               int idx = pixelIndices.at<int>(i,j);
+               // we don't update non-selected pixels
+               if (idx == -1)
+                  continue;
 
                COLORREF current = dst.GetPixel(j + dstOrigin.x, i + dstOrigin.y);
                int bgr[3];
