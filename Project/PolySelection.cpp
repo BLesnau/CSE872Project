@@ -15,7 +15,18 @@ CPolySelection::~CPolySelection()
 
 BOOL CPolySelection::IsPointInSelection( int x, int y )
 {
-   return TRUE;
+   int i, j;
+   BOOL bInPoly = FALSE;
+   for (i = 0, j = m_verts.size()-1; i < m_verts.size(); j = i++) 
+   {
+      if ( ((m_verts[i].y>y) != (m_verts[j].y>y)) &&
+         (x < (m_verts[j].x-m_verts[i].x) * (y-m_verts[i].y) / (m_verts[j].y-m_verts[i].y) + m_verts[i].x) )
+      {
+         bInPoly = !bInPoly;
+      }
+   }
+
+   return bInPoly;
 }
 
 CPoint CPolySelection::GetBasePoint()
