@@ -122,9 +122,13 @@ void CPolySelection::OnDraw( CImage* pImage, COLORREF color )
    CorrectDragRect( &tmpSelection );
    BoundRect( pImage, &tmpSelection );*/
 
+   
+
    auto hDC = pImage->GetDC();
    auto memoryDC = CDC::FromHandle( hDC );
-   auto origColor = memoryDC->SetDCPenColor( color );
+   CPen    pen( PS_SOLID, 1, color );
+   CPen*    pOldPen = memoryDC->SelectObject( &pen );
+   //auto origColor = memoryDC->SetDCPenColor( color );
 
    if( m_verts.size() <= 0 )
    {
