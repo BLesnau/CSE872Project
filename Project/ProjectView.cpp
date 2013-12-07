@@ -36,6 +36,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       ON_WM_MOUSEMOVE()
       ON_WM_LBUTTONDOWN()
       ON_WM_LBUTTONUP()
+      ON_WM_LBUTTONDBLCLK()
       ON_COMMAND(ID_IMAGE_OPENDESTINATION, &CProjectView::OnImageOpendestination)
       ON_COMMAND(ID_MODE_RECTANGLE, &CProjectView::OnModeRectangle)
       ON_COMMAND(ID_MODE_POLYGON, &CProjectView::OnModePolygon)
@@ -373,6 +374,13 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
             m_dragSelection = new CPolySelection( max( point.x, 1 ), max( point.y, 1 ) );
          }
       }
+      else
+      {
+         if( m_selectMode == CSelection::POLY )
+         {
+            m_dragSelection->OnLButtonDown( m_dragState, point, &m_image, &m_image2 );
+         }
+      }
 
       Invalidate();
    }
@@ -393,19 +401,41 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       {     
          m_dragSelection->OnLButtonUp( m_dragState, point, &m_image, m_selections );
 
+         if( m_selectMode == CSelection::RECT )
+         {
+            m_dragSelection = m_dragSelection->Copy();
+            m_dragSelection->Normalize();
+            m_dragState = CSelection::FIXED;
+         }
+      }
+      else if( m_dragState == CSelection::FIXED )
+      {
+         auto bShouldPlace = m_dragSelection->OnLButtonUp( m_dragState, point, &m_image2, m_selections2 );
+
+         if( m_selectMode == CSelection::RECT )
+         {
+            m_dragSelection = NULL;
+            m_dragState = CSelection::IDLE;
+         }
+
+         if( m_selectMode == CSelection::POLY && bShouldPlace )
+         {
+            m_dragSelection = NULL;
+            m_dragState = CSelection::IDLE;
+         }
+      }
+
+      Invalidate();
+   }
+
+   void CProjectView::OnLButtonDblClk( UINT nFlags, CPoint point )
+   {
+      if( m_dragSelection->OnLButtonDblClk( m_dragState, point, m_dragState == CSelection::DRAGGING ? m_selections : m_selections2 ) )
+      {
          m_dragSelection = m_dragSelection->Copy();
          m_dragSelection->Normalize();
          m_dragState = CSelection::FIXED;
       }
-      else if( m_dragState == CSelection::FIXED )
-      {
-         m_dragSelection->OnLButtonUp( m_dragState, point, &m_image2, m_selections2 );
-
-         m_dragSelection = NULL;
-         m_dragState = CSelection::IDLE;
-      }
-
-      Invalidate();
    }
 
    void CProjectView::OnModeRectangle()
