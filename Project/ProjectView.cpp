@@ -430,7 +430,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
    void CProjectView::OnLButtonDblClk( UINT nFlags, CPoint point )
    {
-      if( m_dragSelection->OnLButtonDblClk( m_dragState, point, m_dragState == CSelection::DRAGGING ? m_selections : m_selections2 ) )
+      if(m_dragSelection && m_dragSelection->OnLButtonDblClk( m_dragState, point, m_dragState == CSelection::DRAGGING ? m_selections : m_selections2 ) )
       {
          m_dragSelection = m_dragSelection->Copy();
          m_dragSelection->Normalize();
