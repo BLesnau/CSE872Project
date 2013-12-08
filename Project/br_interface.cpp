@@ -17,30 +17,18 @@
 #include <Eigen/SparseCholesky>
 #include <Eigen/IterativeLinearSolvers>
 #include "RectSelection.h"
+#include <QtConcurrent\qtconcurrentrun.h>
+#include <qfuturesynchronizer.h>
 
 using namespace br;
-
-//        Globals->abbreviations.insert("RectFromStasmEyes","RectFromPoints([],0.15,5.3)");
-//        Globals->abbreviations.insert("RectFromStasmBrow","RectFromPoints(,0.15,5)");
-//        Globals->abbreviations.insert("RectFromStasmNose","RectFromPoints([],0.15,1.15)");
-//        Globals->abbreviations.insert("RectFromStasmMouth","RectFromPoints([],0.3,2)");
-//        Globals->abbreviations.insert("RectFromStasmHair", "RectFromPoints([13,14,15],1.75,1.5)");
-
-// eyebrow points:
-// left
-// [16,17,18,19,20,21,
-// right
-// 22,23,24,25,26,27]
 
 // The first point is the center of the object, the remaining points form a convex hull around the region
 static int leyeIdx[] = {38, 34,35,36,37,30,21,16,17,18};
 static int reyeIdx[] = {39, 40,42,46,45,44,25,24,23,22};
-//static int noseIdx[] = {52, 21,58,57,56,55,54,22};
 static int noseIdx[] = {52, 30,58,57,56,55,54,40};
 static int mouthIdx[] ={67, 59,76,75,74,73,72,65,64,63,62,61,60};
 
 static int * metaIndex[] = {leyeIdx, reyeIdx, noseIdx, mouthIdx};
-//static int indexSizes[] = {9, 9, 11, 18};
 static int indexSizes[] = {10, 10, 8, 13};
 
 void boundingSquare(CRect & boundingBox)
@@ -159,12 +147,10 @@ void templateFromCImage(CImage & input, br::Template & output)
    {
       for (int j=0; j < img.cols;j++)
       {
-
-         img.at<cv::Vec3b>(i,j)[0] = GetBValue(input.GetPixel(j,i));
-         img.at<cv::Vec3b>(i,j)[1] = GetGValue(input.GetPixel(j,i));
-         img.at<cv::Vec3b>(i,j)[2]= GetRValue(input.GetPixel(j,i));
-
-
+         COLORREF color = input.GetPixel(j,i);
+         img.at<cv::Vec3b>(i,j)[0] = GetBValue(color);
+         img.at<cv::Vec3b>(i,j)[1] = GetGValue(color);
+         img.at<cv::Vec3b>(i,j)[2] = GetRValue(color);
       }
    }
 
@@ -182,8 +168,6 @@ void brInterface::pointCorrespondence( CImage & src, CImage & dst, std::vector<C
    if (keyPointDetector == NULL)
       keyPointDetector = Transform::fromAlgorithm("SaveMat(orig)+Cvt(Gray)+Cascade(FrontalFace)+ASEFEyes+RestoreMat(orig)+Affine(300,300,.395,.54, method=Bilin)+SaveMat(warped)+Cvt(Gray)+Stasm+RestoreMat(warped)");
 
-   //this->keyPointDetector = Transform::make("SaveMat(orig)+Cvt(Gray)+Cascade(FrontalFace)+ASEFEyes+RestoreMat(orig)+Affine(300,300,.395,.54, method=Bilin)+SaveMat(warped)+Cvt(Gray)+Stasm+RestoreMat(warped)", NULL);
-   //this->keyPointDetector = Transform::make("SaveMat(orig)+Cvt(Gray)+Cascade(FrontalFace)+ASEFEyes+Stasm(pinEyes=[First_Eye, Second_Eye])+RestoreMat(orig)+Draw(inPlace=true)", NULL);
    srcRegions.clear();
    dstRegions.clear();
 
@@ -200,16 +184,6 @@ void brInterface::pointCorrespondence( CImage & src, CImage & dst, std::vector<C
 
    // Detect keypoints in both images
    keyPointDetector->project(tList, tList);
-
-   Gallery * out = Gallery::make("./");
-   Gallery * metaOut = Gallery::make("./test_output.txt");
-
-   out->writeBlock(tList);
-   metaOut->writeBlock(tList);
-
-   delete out;
-   delete metaOut;
-
 
    QList<QPointF> srcPoints = tList[0].file.points();
    QList<QPointF> dstPoints = tList[1].file.points();
@@ -247,7 +221,7 @@ void brInterface::pointCorrespondence( CImage & src, CImage & dst, std::vector<C
          CRect dstBox;
 
          componentBoundingBox(srcPoints, metaIndex[i], indexSizes[i],srcBox, src.GetWidth(), src.GetHeight(), reCenter);
-         componentBoundingBox(dstPoints, metaIndex[i], indexSizes[i],dstBox, dst.GetWidth(), dst.GetHeight()), reCenter;
+         componentBoundingBox(dstPoints, metaIndex[i], indexSizes[i],dstBox, dst.GetWidth(), dst.GetHeight(), reCenter);
 
          dstBox.NormalizeRect();
          srcBox.NormalizeRect();
@@ -290,168 +264,231 @@ void brInterface::pointCorrespondence( CImage & src, CImage & dst, std::vector<C
    OutputDebugStringA(finalout.str().c_str());
 }
 
+struct channelData
+{
+    cv::Mat * dstIm;
+    cv::Mat * laplacian;
+    cv::Mat * pixelIndices;
+    CRect * srcBox;
+    CPoint srcOrigin;
+    CPoint dstOrigin;
+};
+
+void computeChannel(channelData data, Eigen::SimplicialCholesky<Eigen::SparseMatrix<double> > * solver, Eigen::VectorXd * x)
+{
+     Eigen::VectorXd b(x->size());
+    // set up b for this channel
+    // b values are the laplacian of the src image (adjusted at boundaries)
+    for (int i=1; i < data.srcBox->Height()+1; i++)
+    {
+        for (int j=1; j < data.srcBox->Width()+1;j++)
+        {
+            int idx = data.pixelIndices->at<int>(i,j);
+            // We skip non-selected pixels
+            if (idx == -1)
+                continue;
+
+
+            b(idx) = data.laplacian->at<double>(i + data.srcOrigin.y, j + data.srcOrigin.x);
+
+            // i + 1
+            int adjacentIdx = data.pixelIndices->at<int>(i+1,j);
+            if (adjacentIdx == -1)
+                b(idx) -= data.dstIm->at<unsigned char>(i + 1 + data.dstOrigin.y, j + data.dstOrigin.x);
+
+            // i - 1
+            adjacentIdx = data.pixelIndices->at<int>(i-1,j);
+            if (adjacentIdx == -1)
+                b(idx) -= data.dstIm->at<unsigned char>(i - 1 + data.dstOrigin.y, j + data.dstOrigin.x);
+
+            // j + 1
+            adjacentIdx = data.pixelIndices->at<int>(i,j+1);
+            if (adjacentIdx == -1)
+                b(idx) -= data.dstIm->at<unsigned char>(i + data.dstOrigin.y, j + 1 + data.dstOrigin.x);
+
+            // j - 1
+            adjacentIdx = data.pixelIndices->at<int>(i,j-1);
+            if (adjacentIdx == -1)
+                b(idx) -= data.dstIm->at<unsigned char>(i + data.dstOrigin.y, j - 1 + data.dstOrigin.x);
+
+        }
+    }
+    // actually solve Ax=b
+    *x = solver->solve(b);
+    if(solver->info()!=Eigen::Success) {
+        // solving failed
+        OutputDebugStringA("optimization failed!");
+    }
+}
+
+
 void clone2(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, std::vector<CSelection*> & dstRegions)
 {
-   Template tSrc;
-   templateFromCImage(src, tSrc);
-   Template tDst;
-   templateFromCImage(dst, tDst);
+    OutputDebugStringA("Setting up data\n");
+    Template tSrc;
+    templateFromCImage(src, tSrc);
+    Template tDst;
+    templateFromCImage(dst, tDst);
 
-   cv::Mat srcIm = tSrc.m();
-   cv::Mat dstIm = tDst.m();
+    cv::Mat srcIm = tSrc.m();
+    cv::Mat dstIm = tDst.m();
+    OutputDebugStringA("built templates\n");
+    std::vector<cv::Mat> srcChannels;
+    std::vector<cv::Mat> dstChannels;
+    std::vector<cv::Mat> laplacians;
 
-   std::vector<cv::Mat> srcChannels;
-   std::vector<cv::Mat> dstChannels;
+    cv::split(srcIm, srcChannels);
+    cv::split(dstIm, dstChannels);
 
-   cv::split(srcIm, srcChannels);
-   cv::split(dstIm, dstChannels);
+    OutputDebugStringA("computing laplacians\n");
+    // Compute the laplacian for each channel of the source image
+    for(int i=0;i < 3; i++)
+    {
+        laplacians.push_back(cv::Mat());
+        cv::Laplacian(srcChannels[i], laplacians.back(), CV_64F);
+    }
+    OutputDebugStringA("Set up matrices\n");
 
-   for (int channel=0; channel < (int)srcChannels.size(); channel++)
-   {
-      // Compute the laplacian of the source image
-      cv::Mat laplacian;
-      cv::Mat dstIm = dstChannels[channel];
-      cv::Mat srcIm = srcChannels[channel];
-      cv::Laplacian(srcChannels[channel], laplacian, CV_64F);
+    for (int patchIdx=0; patchIdx < (int)srcRegions.size(); patchIdx++)
+    {
+        OutputDebugStringA("patch setup\n");
+        auto srcBox = srcRegions[patchIdx]->GetBoundingBox();
+        auto dstBox = dstRegions[patchIdx]->GetBoundingBox();
 
-      for (int patchIdx=0; patchIdx < (int)srcRegions.size(); patchIdx++)
-      {
-         auto srcBox = srcRegions[patchIdx]->GetBoundingBox();
-         auto dstBox = dstRegions[patchIdx]->GetBoundingBox();
-
-         std::ostringstream maskout;
-         // We explicitly index the selected pixels
-         int nPixels = 0;
-         cv::Mat pixelIndices(srcBox.Height() + 2, srcBox.Width() + 2, CV_32SC1);
-         CPoint maskOrigin = srcRegions[patchIdx]->GetBasePoint() - CPoint(1,1);
-         for (int i=0; i < pixelIndices.rows; i++)
-         {
+        // We explicitly index the selected pixels
+        int nPixels = 0;
+        cv::Mat pixelIndices(srcBox.Height() + 2, srcBox.Width() + 2, CV_32SC1);
+        CPoint maskOrigin = srcRegions[patchIdx]->GetBasePoint() - CPoint(1,1);
+        for (int i=0; i < pixelIndices.rows; i++)
+        {
             for (int j=0; j < pixelIndices.cols; j++)
             {
-               if (srcRegions[patchIdx]->IsPointInSelection(j + maskOrigin.x, i + maskOrigin.y))
-                  pixelIndices.at<int>(i,j) = nPixels++;
-               else
-                  pixelIndices.at<int>(i,j) = -1;
-               maskout << pixelIndices.at<int>(i,j) << '\t';
+                if (srcRegions[patchIdx]->IsPointInSelection(j + maskOrigin.x, i + maskOrigin.y))
+                    pixelIndices.at<int>(i,j) = nPixels++;
+                else
+                    pixelIndices.at<int>(i,j) = -1;
             }
-            maskout << std::endl;
-         }
-         //OutputDebugStringA(maskout.str().c_str());
+        }
+        OutputDebugStringA("post mask\n");
+        // Construct problems of  the form Ax = b
+        // Here, A is nPixels x nPixels and encodes the laplacian
+        // x is an nPixels long vector of unknowns (the new values of the dst image that
+        // we will solve for), and b is the target values (laplacian of the src image, adjusted
+        // at the boundaries).
 
-         // Construct a problem of  the form Ax = b
-         // Here, A is nPixels x nPixels and encodes the laplacian
-         // x is an nPixels long vector of unknowns (the new values of the dst image that
-         // we will solve for), and b is the target values (laplacian of the src image, adjusted
-         // at the boundaries). We encode the pixels in row-major order
+        // 0  1  0
+        // 1 -4  1
+        // 0  1  0
+        // A is a sparse matrix (discrete laplacian only touches self, and 4 adjacent pixels)
+        Eigen::SparseMatrix<double> A(nPixels, nPixels);
+        std::vector<Eigen::VectorXd> b;
+        std::vector<Eigen::VectorXd> x;
+        for (int i=0; i<3;i++)
+        {
+            b.push_back(Eigen::VectorXd(nPixels));
+            x.push_back(Eigen::VectorXd(nPixels));
+        }
 
-         // 0  1  0
-         // 1 -4  1
-         // 0  1  0
-         // A is a sparse matrix (discrete laplacian only touches self, and 4 adjacent pixels)
-         Eigen::SparseMatrix<double> A(nPixels, nPixels);
-         Eigen::VectorXd b(nPixels);
-         Eigen::VectorXd x(nPixels);
+        CPoint dstOrigin = dstBox.TopLeft() - CPoint(1,1);
+        CPoint srcOrigin = srcBox.TopLeft() - CPoint(1,1);
 
-         CPoint dstOrigin = dstBox.TopLeft() - CPoint(1,1);
-         CPoint srcOrigin = srcBox.TopLeft() - CPoint(1,1);
-
-         for (int i=1; i < srcBox.Height()+1; i++)
-         {
+        std::vector<Eigen::Triplet<double> > data;
+        for (int i=1; i < srcBox.Height()+1; i++)
+        {
             for (int j=1; j < srcBox.Width()+1;j++)
             {
-               int idx = pixelIndices.at<int>(i,j);
-               // We skip non-selected pixels
-               if (idx == -1)
-                  continue;
+                int idx = pixelIndices.at<int>(i,j);
+                // We skip non-selected pixels
+                if (idx == -1)
+                    continue;
 
-               // b values are the laplacian of the src image (adjusted at boundaries)
-               b(idx) = laplacian.at<double>(i + srcOrigin.y, j + srcOrigin.x);
+                // the main diagonal is -4
+                data.push_back(Eigen::Triplet<double>(idx,idx, -4.0));
 
-               // the main diagonal is -4
-               A.insert(idx,idx) = -4.0;
+                // i + 1
+                int adjacentIdx = pixelIndices.at<int>(i+1,j);
+                if (adjacentIdx != -1)
+                    data.push_back(Eigen::Triplet<double>(idx,adjacentIdx, 1));
+                    //A.insert(idx, adjacentIdx) = 1;
 
-               // i + 1
-               int adjacentIdx = pixelIndices.at<int>(i+1,j);
-               if (adjacentIdx != -1)
-                  A.insert(idx, adjacentIdx) = 1;
-               else
-                  b(idx) -= dstIm.at<unsigned char>(i + 1 + dstOrigin.y, j + dstOrigin.x);
+                // i - 1
+                adjacentIdx = pixelIndices.at<int>(i-1,j);
+                if (adjacentIdx != -1)
+                    data.push_back(Eigen::Triplet<double>(idx,adjacentIdx, 1));
 
-               // i - 1
-               adjacentIdx = pixelIndices.at<int>(i-1,j);
-               if (adjacentIdx != -1)
-                  A.insert(idx, adjacentIdx) = 1;
-               else
-                  b(idx) -= dstIm.at<unsigned char>(i - 1 + dstOrigin.y, j + dstOrigin.x);
+                // j + 1
+                adjacentIdx = pixelIndices.at<int>(i,j+1);
+                if (adjacentIdx != -1)
+                    data.push_back(Eigen::Triplet<double>(idx,adjacentIdx, 1));
 
-               // j + 1
-               adjacentIdx = pixelIndices.at<int>(i,j+1);
-               if (adjacentIdx != -1)
-                  A.insert(idx, adjacentIdx) = 1;
-               else
-                  b(idx) -= dstIm.at<unsigned char> (i + dstOrigin.y, j + 1 + dstOrigin.x);
-
-               // j - 1
-               adjacentIdx = pixelIndices.at<int>(i,j-1);
-               if (adjacentIdx != -1)
-                  A.insert(idx, adjacentIdx) = 1;
-               else
-                  b(idx) -= dstIm.at<unsigned char>(i + dstOrigin.y, j - 1 + dstOrigin.x);
-
+                // j - 1
+                adjacentIdx = pixelIndices.at<int>(i,j-1);
+                if (adjacentIdx != -1)
+                    data.push_back(Eigen::Triplet<double>(idx,adjacentIdx, 1));
             }
-         }
+        }
+        A.setFromTriplets(data.begin(), data.end());
+        OutputDebugStringA("built a\n");
 
-         // Setup solver. A is symmetric, positive definite so we have quite a few options for
-         // solvers
-         //Eigen::ConjugateGradient<Eigen::SparseMatrix<double> > solver;
-         //Eigen::BiCGSTAB<Eigen::SparseMatrix<double> > solver;
-         Eigen::SimplicialCholesky<Eigen::SparseMatrix<double> > solver; solver.setMode(Eigen::SimplicialCholeskyLDLT);
-         //Eigen::SimplicialCholesky<Eigen::SparseMatrix<double> > solver; solver.setMode(Eigen::SimplicialCholeskyLLT);
+        // Setup solver. A is symmetric, positive definite so we have quite a few options for
+        // solvers
+        //Eigen::ConjugateGradient<Eigen::SparseMatrix<double> > solver;
+        //Eigen::BiCGSTAB<Eigen::SparseMatrix<double> > solver;
+        Eigen::SimplicialCholesky<Eigen::SparseMatrix<double> > solver; solver.setMode(Eigen::SimplicialCholeskyLDLT);
+        //Eigen::SimplicialCholesky<Eigen::SparseMatrix<double> > solver; solver.setMode(Eigen::SimplicialCholeskyLLT);
 
-         solver.compute(A);
-         if(solver.info()!=Eigen::Success) {
+        solver.compute(A);
+        if(solver.info()!=Eigen::Success) {
             // decomposition failed
             OutputDebugStringA("decomposition failed!");
             return;
-         }
+        }
+        OutputDebugStringA("factorized solve\n");
+        
+        channelData cData;
+        QFutureSynchronizer<void> channelFutures;
+        for (int channel=0; channel < (int)srcChannels.size(); channel++)
+        {
+            channelData cdata;
+            cdata.dstIm = &dstChannels[channel];
+            cdata.laplacian = &laplacians[channel];
+            cdata.pixelIndices = &pixelIndices;
+            cdata.srcBox = &srcBox;
+            cdata.srcOrigin = srcOrigin;
+            cdata.dstOrigin = dstOrigin;
+            channelFutures.addFuture(QtConcurrent::run(computeChannel, cdata, &solver, &x[channel]));
 
-         // actually solve Ax=b
-         x = solver.solve(b);
-         if(solver.info()!=Eigen::Success) {
-            // solving failed
-            OutputDebugStringA("optimization failed!");
-            continue;
-         }
+        }
+        channelFutures.waitForFinished();
+        OutputDebugStringA("post solve\n");
 
-
-         // Copy the new values back into dst
-         for (int i=0; i < dstBox.Height()+2; i++)
-         {
+        // Copy the new values back into dst
+        for (int i=0; i < dstBox.Height()+2; i++)
+        {
             for (int j=0; j < dstBox.Width()+2; j++)
             {
-               int idx = pixelIndices.at<int>(i,j);
-               // we don't update non-selected pixels
-               if (idx == -1)
-                  continue;
+                int idx = pixelIndices.at<int>(i,j);
+                // we don't update non-selected pixels
+                if (idx == -1)
+                    continue;
 
-               COLORREF current = dst.GetPixel(j + dstOrigin.x, i + dstOrigin.y);
-               int bgr[3];
-               bgr[2] = GetRValue(current);
-               bgr[1] = GetGValue(current);
-               bgr[0] = GetBValue(current);
-               int val = int(x(idx) + 0.5);
-               if (val < 0)
-                  val = 0;
-               if (val >= 255)
-                  val = 255;
-               bgr[channel] = val;
-               dst.SetPixel(j + dstOrigin.x,i + dstOrigin.y, RGB(bgr[2], bgr[1], bgr[0]));
-            }
-         }// dstRegions[patchIdx]
-      } // patches
-   } // channels
+                int bgr[3];
+                for(int channel =0; channel<3; channel++)
+                {
+                    int val = int(x[channel](idx) + 0.5);
+                    if (val < 0)
+                        val = 0;
+                    if (val >= 255)
+                        val = 255;
 
+                    bgr[channel] = val;
+                }
+                dst.SetPixel(j + dstOrigin.x,i + dstOrigin.y, RGB(bgr[2], bgr[1], bgr[0]));
+            } // patch width
+        }// patch height
+    }// patches
 }
+
 
 void clone(CImage & src, CImage & dst, std::vector<CSelection*> & srcRegions, std::vector<CSelection*> & dstRegions)
 {
