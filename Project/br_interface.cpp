@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "br_interface.h"
+#include "PolySelection.h"
 
 // A min macro is clearly helpful, and not just obnoxious
 #undef min
@@ -23,13 +24,16 @@
 using namespace br;
 
 // The first point is the center of the object, the remaining points form a convex hull around the region
-static int leyeIdx[] = {38, 34,35,36,37,30,21,16,17,18};
-static int reyeIdx[] = {39, 40,42,46,45,44,25,24,23,22};
+//static int leyeIdx[] = {38, 34,35,36,37,30,21,16,17,18};
+//static int reyeIdx[] = {39, 40,47,46,45,44,25,24,23,22};
+static int leyeIdx[] = {38, 21,16,17,18};
+static int reyeIdx[] = {39, 25,24,23,22};
 static int noseIdx[] = {52, 30,58,57,56,55,54,40};
 static int mouthIdx[] ={67, 59,76,75,74,73,72,65,64,63,62,61,60};
 
 static int * metaIndex[] = {leyeIdx, reyeIdx, noseIdx, mouthIdx};
-static int indexSizes[] = {10, 10, 8, 13};
+//static int indexSizes[] = {10, 10, 8, 13};
+static int indexSizes[] = {5,5, 8, 13};
 
 void boundingSquare(CRect & boundingBox)
 {
@@ -100,10 +104,6 @@ void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength,
          bbox.top = yVal;
    }
 
-   std::ostringstream bOut;
-   bOut << "bbox dimensions: " << bbox.left << ',' << bbox.bottom << ',' << bbox.right << "," << bbox.top << std::endl;;
-   ::OutputDebugStringA(bOut.str().c_str());
-
    if (reCenter)
    {
       int high_diff = abs(bbox.top - center.y());
@@ -112,23 +112,12 @@ void componentBoundingBox(QList<QPointF> & points, int * index, int indexLength,
          bbox.bottom = center.y() - high_diff;
       else
          bbox.top = center.y() + low_diff;
-
-      //*
       int height = abs(bbox.Height());
       double height_delta = height * .125 ;
       height *=  1.25;
       bbox.bottom -= height_delta;
       bbox.top = bbox.bottom + height;
-      //*/
-
    }
-
-   //boundingSquare(bbox);
-
-   std::ostringstream b2;
-   b2 << "Squared bbox dimensions: " << bbox.left << ',' << bbox.bottom << ',' << bbox.right << "," << bbox.top << std::endl << std::endl;
-   ::OutputDebugStringA(b2.str().c_str());
-   //TRACE("bbox dimensions %d %d %d %d", bbox.left, bbox.bottom, bbox.right, bbox.top);
 }
 static int cnt=0;
 void templateFromCImage(CImage & input, br::Template & output)
@@ -162,6 +151,87 @@ void templateFromCImage(CImage & input, br::Template & output)
 }
 
 static QSharedPointer<br::Transform> keyPointDetector;
+
+void polySelection(std::vector<CSelection*> & srcRegions, std::vector<CSelection*> & dstRegions, QList<QPointF> & srcPoints, QList<QPointF> & dstPoints, int * idx, int count, CImage & src, CImage & dst, bool isEye, float scale = 1)
+{
+    QPointF qsOrigin = srcPoints[idx[0]+2];
+    QPointF qdOrigin = dstPoints[idx[0]+2];
+    QList<QPointF> additional;
+    QList<QPointF> uniformBoundary;
+    for (int i=1; i < count;i++)
+    {
+        QPointF srcDelta = srcPoints[idx[i]+2] - qsOrigin;
+        QPointF dstDelta = dstPoints[idx[i]+2] - qdOrigin;
+        if (srcDelta.manhattanLength() > dstDelta.manhattanLength() )
+            uniformBoundary.append(srcDelta);
+        else
+            uniformBoundary.append(dstDelta);
+        uniformBoundary.last().rx() *= scale;
+        uniformBoundary.last().ry() *= scale;
+
+        if (isEye)
+        {
+            additional.append(uniformBoundary.last());
+            additional.last().ry()  = -additional.last().ry();
+        }
+    }
+    for (int i=additional.length() - 1;i >=0;i--)
+    {
+        uniformBoundary.append(additional[i]);
+    }
+
+    CPolySelection * srcSelection = new CPolySelection(uniformBoundary[0].x() + qsOrigin.x(),uniformBoundary[0].y() + qsOrigin.y());
+    CPolySelection * dstSelection = new CPolySelection(uniformBoundary[0].x() + qdOrigin.x(),uniformBoundary[0].y() + qdOrigin.y());
+
+    for (int i = 1; i < uniformBoundary.length();i++)
+    {
+        srcSelection->AddPoint(uniformBoundary[i].x() + qsOrigin.x(), uniformBoundary[i].y() + qsOrigin.y());
+        dstSelection->AddPoint(uniformBoundary[i].x() + qdOrigin.x(), uniformBoundary[i].y() + qdOrigin.y());
+    }
+    srcRegions.push_back(srcSelection);
+    dstRegions.push_back(dstSelection);
+}
+
+void rectSelection(std::vector<CSelection*> & srcRegions, std::vector<CSelection*> & dstRegions, QList<QPointF> & srcPoints, QList<QPointF> & dstPoints, int * idx, int count, CImage & src, CImage & dst, bool isEye)
+{
+    CRect srcBox;
+    CRect dstBox;
+
+    componentBoundingBox(srcPoints, idx, count,srcBox, src.GetWidth(), src.GetHeight(), isEye);
+    componentBoundingBox(dstPoints, idx, count,dstBox, dst.GetWidth(), dst.GetHeight(), isEye);
+
+    dstBox.NormalizeRect();
+    srcBox.NormalizeRect();
+
+    CPoint dstCenter = dstBox.CenterPoint();
+    CPoint srcCenter = srcBox.CenterPoint();
+
+    CRect srcNorm = srcBox - srcCenter;
+    CRect dstNorm = dstBox - dstCenter;
+
+    int final_width = srcNorm.Width()  > dstNorm.Width()  ? srcNorm.Width() : dstNorm.Width();
+    int final_height= srcNorm.Height() > dstNorm.Height() ? srcNorm.Height(): dstNorm.Height();
+
+    CRect finalNorm;
+    finalNorm.left = -final_width / 2;
+    finalNorm.right = finalNorm.left + final_width;
+    finalNorm.top = -final_height / 2;
+    finalNorm.bottom = finalNorm.top + final_height;
+
+    dstBox = finalNorm + dstCenter;
+    srcBox = finalNorm + srcCenter; 
+
+    dstBox.NormalizeRect();
+    srcBox.NormalizeRect();
+
+    std::ostringstream bOut;
+    bOut << "\toutput bbox dimensions " << dstBox.left << ',' << dstBox.bottom << ',' << dstBox.right << "," << dstBox.top << std::endl;
+
+    ::OutputDebugStringA(bOut.str().c_str());
+
+    dstRegions.push_back( new CRectSelection( dstBox ) );
+    srcRegions.push_back( new CRectSelection( srcBox ) );
+}
 
 void brInterface::pointCorrespondence( CImage & src, CImage & dst, std::vector<CSelection*>  & srcRegions, std::vector<CSelection*> & dstRegions, CSelection::Mode selectMode )
 {
@@ -210,52 +280,19 @@ void brInterface::pointCorrespondence( CImage & src, CImage & dst, std::vector<C
 
    for (int i=0; i < 4; i++)
    {
-      bool reCenter = i != 2;
-      // skipping the nose
-      if (i==2)
-         continue;
+      bool reCenter = i < 2;
+    // skipping the nose
+    if (i==2)
+        continue;
 
-      if( selectMode == CSelection::RECT )
-      {
-         CRect srcBox;
-         CRect dstBox;
+      if( selectMode == CSelection::RECT ) {
 
-         componentBoundingBox(srcPoints, metaIndex[i], indexSizes[i],srcBox, src.GetWidth(), src.GetHeight(), reCenter);
-         componentBoundingBox(dstPoints, metaIndex[i], indexSizes[i],dstBox, dst.GetWidth(), dst.GetHeight(), reCenter);
-
-         dstBox.NormalizeRect();
-         srcBox.NormalizeRect();
-
-         CPoint dstCenter = dstBox.CenterPoint();
-         CPoint srcCenter = srcBox.CenterPoint();
-
-         CRect srcNorm = srcBox - srcCenter;
-         CRect dstNorm = dstBox - dstCenter;
-
-         int final_width = srcNorm.Width()  > dstNorm.Width()  ? srcNorm.Width() : dstNorm.Width();
-         int final_height= srcNorm.Height() > dstNorm.Height() ? srcNorm.Height(): dstNorm.Height();
-
-         CRect finalNorm;
-         finalNorm.left = -final_width / 2;
-         finalNorm.right = finalNorm.left + final_width;
-         finalNorm.top = -final_height / 2;
-         finalNorm.bottom = finalNorm.top + final_height;
-
-         dstBox = finalNorm + dstCenter;
-         srcBox = finalNorm + srcCenter; 
-
-         dstBox.NormalizeRect();
-         srcBox.NormalizeRect();
-
-
-         std::ostringstream bOut;
-         bOut << "\toutput bbox dimensions " << dstBox.left << ',' << dstBox.bottom << ',' << dstBox.right << "," << dstBox.top << std::endl;
-
-         ::OutputDebugStringA(bOut.str().c_str());
-
-         dstRegions.push_back( new CRectSelection( dstBox ) );
-         srcRegions.push_back( new CRectSelection( srcBox ) );
+          rectSelection(srcRegions, dstRegions, srcPoints, dstPoints, metaIndex[i], indexSizes[i], src, dst, reCenter);
       }
+      else
+          polySelection(srcRegions, dstRegions, srcPoints, dstPoints, metaIndex[i], indexSizes[i], src, dst, reCenter);
+        
+
    }
 
 

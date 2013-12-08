@@ -115,9 +115,6 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
          for( int i=0; i<(int)m_selections.size(); i++ )
          {
             auto selection = m_selections.at( i );
-            /*std::ostringstream boxOut; 
-            boxOut << "Total: " << m_selections.size() << " Drawing: " << i << "\t" << selection.left << " " << selection.right << " " << selection.bottom << " " << selection.top << std::endl;
-            OutputDebugStringA(boxOut.str().c_str());*/
 
             selection->OnDraw( &drawnImage, m_colors.at( i % m_colors.size() ) );
          }
@@ -308,25 +305,6 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       }
 
       clone2(m_image, m_image2, m_selections, m_selections2);
-
-      /*
-      CRect outRect;
-      for( int i=0; i<m_selections.size(); i++ )
-      {
-      auto srcSel = m_selections.at(i);
-      auto dstSel = m_selections2.at(i);
-
-      for( int w=0; w<=srcSel.Width(); w++ )
-      {
-      for( int h=0; h<=srcSel.Height(); h++ )
-      {
-      auto clr = m_image.GetPixel( srcSel.left + w, srcSel.top + h );
-      m_image2.SetPixel( dstSel.left + w, dstSel.top + h, clr );
-      }
-      }
-      }
-      //*/
-
       OnSelectionClear();
    }
 
@@ -341,7 +319,6 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
       {
          return;
       }
-
       m_dragSelection->OnMouseMove( m_dragState, point, &m_image, &m_image2 );
 
       Invalidate(FALSE);
