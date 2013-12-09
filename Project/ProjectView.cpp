@@ -209,7 +209,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
    void CProjectView::OnImageOpen()
    {
-      CFileDialog fileDlg(true, NULL, NULL, OFN_FILEMUSTEXIST, L"Bitmap format|*.bmp|JPEG format|*.jpg;*.jpeg|GIF format|*.gif|PNG format|*.png|TIFF format|*.tif;*.tiff|");
+      CFileDialog fileDlg(true, NULL, NULL, OFN_FILEMUSTEXIST, L"JPEG format|*.jpg;*.jpeg|Bitmap format|*.bmp|GIF format|*.gif|PNG format|*.png|TIFF format|*.tif;*.tiff|");
 
       if(fileDlg.DoModal() != IDOK)
       {
@@ -221,7 +221,7 @@ IMPLEMENT_DYNCREATE(CProjectView, CView)
 
    void CProjectView::OnImageOpendestination()
    {
-      CFileDialog fileDlg(true, NULL, NULL, OFN_FILEMUSTEXIST, L"Bitmap format|*.bmp|JPEG format|*.jpg;*.jpeg|GIF format|*.gif|PNG format|*.png|TIFF format|*.tif;*.tiff|");
+      CFileDialog fileDlg(true, NULL, NULL, OFN_FILEMUSTEXIST, L"JPEG format|*.jpg;*.jpeg|Bitmap format|*.bmp|GIF format|*.gif|PNG format|*.png|TIFF format|*.tif;*.tiff|");
 
       if(fileDlg.DoModal() != IDOK)
       {
