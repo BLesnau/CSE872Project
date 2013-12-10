@@ -24,7 +24,7 @@ Process > Process Selection:
     Applies the Poisson "seamless cloning" from the source image to the destination image
 
 
-***  Rectangular Selections ***
+***  Rectangle Selections ***
 Choose Selection > Mode > Rectangle
 Click, drag, and release on an area of the image on the left
 Move your mouse and click to position the selection on the image on the right
